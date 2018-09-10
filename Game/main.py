@@ -2,6 +2,7 @@ import pygame as pg
 import sys
 from settings import *
 from sprites import *
+from tilemaps import *
 
 class Game:
     def __init__(self):
