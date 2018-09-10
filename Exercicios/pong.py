@@ -28,7 +28,6 @@ acelerador =0.2
 
 playerScore = cpuScore = 0
 
-
 while playing:
 
     bola.x += vx
