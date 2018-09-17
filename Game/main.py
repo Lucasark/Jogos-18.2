@@ -16,6 +16,8 @@ class Game:
     def load_data(self):
         pass
 
+    #teste
+
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
