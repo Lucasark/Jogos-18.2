@@ -1,0 +1,18 @@
+cóe mano, valeu primeiramente por estar aqui me abrindo namoral, foi muito educado de sua parte.
+
+
+Seguinte, mandei pra você por meio desta pasta os arquivos em png para a montagem da praia, temos algumas observações:
+
+1- o png "pedra de bloqueio" foi feito pra ser fixado nos cantos superiores direito e esquerdo da parede, eles vão impedir que o player tente ir pra algum lugar que não deve
+2- o "pedra de bloqueio superior" tem o mesmo proposito, ele foi feito pra ser fixado em cima
+3- esse você já sabe, mas a água também tem esse propósito, mas deve ser posicionada no canto inferior, também de posição fixa
+4-"grama praia" deve ser fixado no canto superior esquerdo, ela é basicamente um background também, tá ali só pra sinalizar um pouquinho do próximo mapa, que é a floresta
+
+Afim de simplificar o que eu disse acima, eu mandei um arquivo com os sprites fixos já posicionados,relembrando que no caso o sprite da parede está no canto esquerdo mas na hora é só spawnar outro no lado direito
+
+
+
+o resto é objeto mesmo e você pode escolher spawnar em qualquer lugar
+
+
+5-assim que você terminar de testar a montagem dos arquivos num mapa, me responda o mais rápido possível pra saber se era isso que você queria, e daí eu faço o resto no mesmo esquema pros outros mapas
