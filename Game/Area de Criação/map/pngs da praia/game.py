@@ -57,6 +57,7 @@ bloqueio1.set_position(tile, 0)
 bloqueio3.set_position(fundo.width-tile, 0)
 bloqueio2.set_position(0, 0)
 
+
 #Grama
 grama = GameImage(s.borderEdge[3])
 grama.set_position(0, 0)
@@ -77,13 +78,96 @@ nao_colidiveis = [fundo, grama,monster_spawn]
 colidiveis = [bloqueio1, bloqueio2, bloqueio3,arvore_1,arvore_2,agua,arvore_3,arvore_4,pedra_de_5_lados]
 bg_total = nao_colidiveis + colidiveis
 
-#colisao:
+#colisões:
 
-def colisao(atr,player):
-    for i in range(0,len(atr)):
-        if colisao_pplay.collided_perfect(atr[i],player):
+
+
+#Seguinte meu bruxo, eu dividi as colisões em 4 e adicionei um valor booleano correspondente a cada direção na função andar()
+#não é nem de longe a melhor solução, mas como a gente ta meio sem tempo eu já rushei isso aí, vê o que que vc acha e me da o feedback
+
+
+
+
+pode_andar_direita = pode_andar_cima = pode_andar_esquerda = pode_andar_baixo = True
+
+
+def colisao_direita(atr,player):
+    global pode_andar_direita
+    global pode_andar_cima
+    global pode_andar_esquerda
+    global pode_andar_baixo
+    for i in range(len(atr)):
+        if colisao_pplay.collided_perfect(player,atr[i]):
+            pode_andar_direita = False
+            pode_andar_baixo = False
+            pode_andar_cima = False
+            pode_andar_esquerda = True
             return True
+    pode_andar_direita = True
+    pode_andar_baixo = True
+    pode_andar_cima = True
+    pode_andar_esquerda = True
     return False
+
+def colisao_esquerda(atr,player):
+    global pode_andar_direita
+    global pode_andar_cima
+    global pode_andar_esquerda
+    global pode_andar_baixo
+    for i in range(len(atr)):
+        if colisao_pplay.collided_perfect(player,atr[i]):
+            pode_andar_direita = True
+            pode_andar_baixo = False
+            pode_andar_cima = False
+            pode_andar_esquerda = False
+            return True
+    pode_andar_direita = True
+    pode_andar_baixo = True
+    pode_andar_cima = True
+    pode_andar_esquerda = True
+    return False
+
+def colisao_cima(atr,player):
+    global pode_andar_direita
+    global pode_andar_cima
+    global pode_andar_esquerda
+    global pode_andar_baixo
+    for i in range(len(atr)):
+        if colisao_pplay.collided_perfect(player,atr[i]):
+            pode_andar_direita = False
+            pode_andar_baixo = True
+            pode_andar_cima = False
+            pode_andar_esquerda = False
+            return True
+    pode_andar_direita = True
+    pode_andar_baixo = True
+    pode_andar_cima = True
+    pode_andar_esquerda = True
+    return False
+
+def colisao_baixo(atr,player):
+    global pode_andar_direita
+    global pode_andar_cima
+    global pode_andar_esquerda
+    global pode_andar_baixo
+    for i in range(len(atr)):
+        if colisao_pplay.collided_perfect(player,atr[i]):
+            pode_andar_direita = False
+            pode_andar_baixo = False
+            pode_andar_cima = True
+            pode_andar_esquerda = False
+            return True
+    pode_andar_direita = True
+    pode_andar_baixo = True
+    pode_andar_cima = True
+    pode_andar_esquerda = True
+    return False
+
+
+
+
+
+
 
 # def colisao(atr,player):
 #     for i in range(0,len(atr)):
@@ -125,36 +209,37 @@ def movimento_objet(atr, mov, orien):
             atr[i].y += velocidade
 
 def andar():
-    if k.key_pressed("A") or k.key_pressed("LEFT"): #<-
+    if k.key_pressed("A") or k.key_pressed("LEFT") and pode_andar_esquerda: #<-
+
         '''
         if (fundo.x + player.x >= 0):
             player.x -= 1
         else:
         '''
-        if not colisao(colidiveis,player):
+        if not colisao_esquerda(colidiveis,player):
             movimento_objet(bg_total, 1, 'x')
         else:
             movimento_objet(bg_total, -1,'x')
 
 
-    elif k.key_pressed("D") or k.key_pressed("RIGHT"): #->
+    elif k.key_pressed("D") or k.key_pressed("RIGHT") and pode_andar_direita: #->
         '''
         if (fundo.x + player.x <= 0 ):
             player.x += 1
         else:
         '''
-        if not colisao(colidiveis,player):
+        if not colisao_direita(colidiveis,player):
             movimento_objet(bg_total, -1, 'x')
         else:
             movimento_objet(bg_total, 1,'x')
 
-    elif k.key_pressed("S") or k.key_pressed("DOWN"):
-        if not colisao(colidiveis, player):
+    elif k.key_pressed("S") or k.key_pressed("DOWN") and pode_andar_baixo:
+        if not colisao_baixo(colidiveis, player):
             movimento_objet(bg_total, 1, 'y')
         else:
             movimento_objet(bg_total,-1,'y')
-    elif k.key_pressed("W") or k.key_pressed("UP"):
-        if not colisao(colidiveis, player):
+    elif k.key_pressed("W") or k.key_pressed("UP") and pode_andar_cima:
+        if not colisao_cima(colidiveis, player):
             movimento_objet(bg_total, -1, 'y')
         else:
             movimento_objet(bg_total,1,'y')
