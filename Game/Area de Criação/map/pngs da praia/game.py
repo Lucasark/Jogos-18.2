@@ -75,115 +75,106 @@ arvore_4.set_position(arvore_3.x,arvore_3.height)
 
 #Appendes do BG:
 nao_colidiveis = [fundo, grama,monster_spawn]
-colidiveis = [bloqueio1, bloqueio2, bloqueio3,arvore_1,arvore_2,agua,arvore_3,arvore_4,pedra_de_5_lados]
-bg_total = nao_colidiveis + colidiveis
+colidiveis_esq = [bloqueio2]
+colidiveis_dir = [bloqueio3]
+colidiveis_cima = [bloqueio1]
+colidiveis_baixo = [agua]
+colidiveis = [arvore_1, arvore_2, arvore_3, arvore_4, pedra_de_5_lados]
+bg_total = nao_colidiveis + colidiveis + colidiveis_cima + colidiveis_baixo + colidiveis_dir + colidiveis_esq
 
-#colisões:
+#Button
+def butao_click(mouse, butao):
+    if mouse[0] >= butao.x and mouse[0] <= butao.x + butao.width and mouse[1] >= butao.y and mouse[1] <= butao.y + butao.height:
+        return True
 
+#Click "Pause"
+def click_pause(wait):
+    if s.CLICK_SIGNAL and s.CLICK_TIME == 0:
+        s.CLICK_SIGNAL = False
+        s.CLICK_TIME = wait
+        return True
+    return False
 
+def click_call():
+    if s.CLICK_TIME == 0 and not s.CLICK_SIGNAL:
+        s.CLICK_SIGNAL = True
+    if s.CLICK_TIME != 0:
+        if not s.CLICK_SIGNAL:
+            s.CLICK_TIME -= 1
+        else:
+            s.CLICK_TIME = 20
 
-#Seguinte meu bruxo, eu dividi as colisões em 4 e adicionei um valor booleano correspondente a cada direção na função andar()
-#não é nem de longe a melhor solução, mas como a gente ta meio sem tempo eu já rushei isso aí, vê o que que vc acha e me da o feedback
-
-
-
-
-pode_andar_direita = pode_andar_cima = pode_andar_esquerda = pode_andar_baixo = True
-
-
+#Collisions
 def colisao_direita(atr,player):
-    global pode_andar_direita
-    global pode_andar_cima
-    global pode_andar_esquerda
-    global pode_andar_baixo
     for i in range(len(atr)):
-        if colisao_pplay.collided_perfect(player,atr[i]):
-            pode_andar_direita = False
-            pode_andar_baixo = False
-            pode_andar_cima = False
-            pode_andar_esquerda = True
+        if colisao_pplay.collided_perfect(player, atr[i]):
+            s.andar_direita = False
+            s.andar_baixo = True
+            s.andar_cima = True
+            s.andar_esquerda = True
             return True
-    pode_andar_direita = True
-    pode_andar_baixo = True
-    pode_andar_cima = True
-    pode_andar_esquerda = True
+    s.andar_direita = True
+    s.andar_baixo = True
+    s.andar_cima = True
+    s.andar_esquerda = True
     return False
 
-def colisao_esquerda(atr,player):
-    global pode_andar_direita
-    global pode_andar_cima
-    global pode_andar_esquerda
-    global pode_andar_baixo
-    for i in range(len(atr)):
-        if colisao_pplay.collided_perfect(player,atr[i]):
-            pode_andar_direita = True
-            pode_andar_baixo = False
-            pode_andar_cima = False
-            pode_andar_esquerda = False
-            return True
-    pode_andar_direita = True
-    pode_andar_baixo = True
-    pode_andar_cima = True
-    pode_andar_esquerda = True
+#Obejto_1 colide com objeto_2 pela esqueda no proximo loop?:
+def range_esq(obj_1, obj_2, time):
+    if obj_1.x-time >= obj_2.x+obj_2.width:
+        return True
     return False
 
-def colisao_cima(atr,player):
-    global pode_andar_direita
-    global pode_andar_cima
-    global pode_andar_esquerda
-    global pode_andar_baixo
+def colisao_esquerda(atr, player):
+    #vel = 350 * janela.delta_time()
     for i in range(len(atr)):
-        if colisao_pplay.collided_perfect(player,atr[i]):
-            pode_andar_direita = False
-            pode_andar_baixo = True
-            pode_andar_cima = False
-            pode_andar_esquerda = False
+        if colisao_pplay.collided_perfect(player, atr[i]):
+            s.andar_direita = True
+            s.andar_baixo = True
+            s.andar_cima = True
+            s.andar_esquerda = False
             return True
-    pode_andar_direita = True
-    pode_andar_baixo = True
-    pode_andar_cima = True
-    pode_andar_esquerda = True
+    s.andar_direita = True
+    s.andar_baixo = True
+    s.andar_cima = True
+    s.andar_esquerda = True
+    return False
+
+def range_cima(obj_1, obj_2):
+    print(obj_1.y, " ", obj_2.y, " ", obj_2.height)
+    if obj_1.y-5 <= obj_2.y+obj_2.height:
+        return True
+    return False
+
+def colisao_cima(atr, player):
+    for i in range(len(atr)):
+        if colisao_pplay.collided_perfect(player, atr[i]):
+            s.andar_direita = True
+            s.andar_baixo = True
+            s.andar_cima = False
+            s.andar_esquerda = True
+            return True
+    s.andar_direita = True
+    s.andar_baixo = True
+    s.andar_cima = True
+    s.andar_esquerda = True
     return False
 
 def colisao_baixo(atr,player):
-    global pode_andar_direita
-    global pode_andar_cima
-    global pode_andar_esquerda
-    global pode_andar_baixo
     for i in range(len(atr)):
-        if colisao_pplay.collided_perfect(player,atr[i]):
-            pode_andar_direita = False
-            pode_andar_baixo = False
-            pode_andar_cima = True
-            pode_andar_esquerda = False
+        if colisao_pplay.collided_perfect(player, atr[i]):
+            s.andar_direita = True
+            s.andar_baixo = False
+            s.andar_cima = True
+            s.andar_esquerda = True
             return True
-    pode_andar_direita = True
-    pode_andar_baixo = True
-    pode_andar_cima = True
-    pode_andar_esquerda = True
+    s.andar_direita = True
+    s.andar_baixo = True
+    s.andar_cima = True
+    s.andar_esquerda = True
     return False
 
-
-
-
-
-
-
-# def colisao(atr,player):
-#     for i in range(0,len(atr)):
-#         if player.x+1 == atr[i].x:
-#             return True
-#         elif player.x-1 == atr[i].x:
-#             return True
-#         elif player.y+1 == atr[i].y:
-#             return True
-#         elif player.y-1 == atr[i].y:
-#             return True
-#     return False
-
 #Appendes do Cenario:
-
-
 
 
 def draw_sprite(atr):
@@ -191,68 +182,75 @@ def draw_sprite(atr):
         atr[i].draw()
 
 def movimento_objet(atr, mov, orien):
-    velocidade = 250 * janela.delta_time()
+    velocidade = 350 * janela.delta_time()
     if mov == 1 and orien == 'x':
         for i in range(len(atr)):
             atr[i].x += velocidade
+        #res.x -= velocidade
 
     elif mov == -1 and orien == 'x':
         for i in range(len(atr)):
             atr[i].x -= velocidade
+        #res.x += velocidade
 
     elif mov == 1 and orien == 'y':
         for i in range(len(atr)):
             atr[i].y -= velocidade
+        #res.y += velocidade
 
     elif mov == -1 and orien == 'y':
         for i in range(len(atr)):
             atr[i].y += velocidade
+        #res.y -= velocidade
 
 def andar():
-    if k.key_pressed("A") or k.key_pressed("LEFT") and pode_andar_esquerda: #<-
-
-        '''
-        if (fundo.x + player.x >= 0):
-            player.x -= 1
-        else:
-        '''
-        if not colisao_esquerda(colidiveis,player):
+    if k.key_pressed("A") or k.key_pressed("LEFT") and s.andar_esquerda: #<-
+        if not colisao_esquerda(colidiveis+colidiveis_esq,player):
             movimento_objet(bg_total, 1, 'x')
         else:
             movimento_objet(bg_total, -1,'x')
 
 
-    elif k.key_pressed("D") or k.key_pressed("RIGHT") and pode_andar_direita: #->
-        '''
-        if (fundo.x + player.x <= 0 ):
-            player.x += 1
-        else:
-        '''
-        if not colisao_direita(colidiveis,player):
+    elif k.key_pressed("D") or k.key_pressed("RIGHT") and s.andar_direita: #->
+        if not colisao_direita(colidiveis+colidiveis_dir,player):
             movimento_objet(bg_total, -1, 'x')
         else:
             movimento_objet(bg_total, 1,'x')
 
-    elif k.key_pressed("S") or k.key_pressed("DOWN") and pode_andar_baixo:
-        if not colisao_baixo(colidiveis, player):
+    elif k.key_pressed("S") or k.key_pressed("DOWN") and s.andar_baixo: #\/
+        if not colisao_baixo(colidiveis+colidiveis_baixo, player):
             movimento_objet(bg_total, 1, 'y')
         else:
             movimento_objet(bg_total,-1,'y')
-    elif k.key_pressed("W") or k.key_pressed("UP") and pode_andar_cima:
-        if not colisao_cima(colidiveis, player):
+
+    elif k.key_pressed("W") or k.key_pressed("UP") and s.andar_cima: #/\
+        if not colisao_cima(colidiveis+colidiveis_cima, player):
             movimento_objet(bg_total, -1, 'y')
         else:
-            movimento_objet(bg_total,1,'y')
+            movimento_objet(bg_total,1 ,'y')
+
+def opcoes():
+    if k.key_pressed("F") and click_pause(s.CLICK_TIME_WAIT):
+        print("FERRAMENTAS")
+    elif k.key_pressed("E") and click_pause(s.CLICK_TIME_WAIT):
+        print("HABILIDADES")
+    elif k.key_pressed("ESC") and click_pause(s.CLICK_TIME_WAIT):
+        print("sair")
+        janela.close()
+
 
 #print(player.x, ":X - Y:", player.y,"     ",s.WIDTH,":S.W  -  F.W",fundo.width,"         ",fundo.x,":f.x   -  f.y",fundo.y)
 
 def update():
     janela.set_title(str(janela.delta_time()))
     andar()
+    opcoes()
     player.draw()
     janela.update()
 
 while True:
+    click_call()
     background_da_janela.draw()
     draw_sprite(bg_total)
+    #print("E: ",s.andar_esquerda,"D: ",s.andar_direita,"C: ",s.andar_cima,"B: ",s.andar_baixo)
     update()

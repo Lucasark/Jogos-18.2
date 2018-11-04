@@ -3,8 +3,6 @@ import pygame
 #Titulo
 TITLE = 'Teste de Game'
 
-
-
 #Dificuldade
 DIFICULDADE_GAME = 1
 
@@ -32,5 +30,18 @@ background_do_background = 'fundo_forcado.png'
 #DIFS = ['D1S.png','D2S.png','D3S.png']
 #VOLTAR = 'voltar.png'
 #VOLTARP = 'voltarP.png'
+
+#PLAYER SETTINGS:
+andar_cima = True
+andar_baixo = True
+andar_esquerda = True
+andar_direita = True
+
+#CLICK:
+CLICK_TIME = 0
+CLICK_TIME_WAIT = 30
+CLICK_ANDAR_WAIT = 20
+CLICK_SIGNAL = True #True -> Pode clickar -- False-> Nao pode clickar
+
 
 #PLAYER SETTINGS:
