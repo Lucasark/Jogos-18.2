@@ -6,6 +6,10 @@ import settings as s
 #import classes as c
 
 #janela
+#from collision import Collision
+
+#from gameimage import GameImage
+
 janela = Window(s.WIDTH, s.HEIGHT)  # 720,480 - 1280,720
 janela.set_background_color((255, 255, 255))
 janela.set_title(s.TITLE)
