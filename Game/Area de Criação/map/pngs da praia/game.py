@@ -1,6 +1,9 @@
 from PPlay.window import *
 from PPlay.collision import *
+from PPlay.mouse import *
 from PPlay.gameimage import *
+from PPlay.animation import *
+from PPlay.sprite import *
 import settings as s
 #import options as o
 #import classes as c
@@ -38,7 +41,9 @@ tile = 32
 
 #SET_POSITION: PLAYER
 
-player = GameImage(s.player)
+direcao_player = 0
+player = Animation(s.player[direcao_player],3)
+player.set_total_duration(1000)
 player.set_position(s.WIDTH/2, s.HEIGHT/2)
 
 #SET POSITIONS: BACKGROUD
@@ -56,12 +61,22 @@ agua = GameImage(s.borderEdge[2])
 agua.set_position(0, fundo.height-agua.height)
 
 #Blogueio
-bloqueio1 = GameImage(s.borderEdge[1]) #Superior
+bloqueio1 = GameImage(s.borderEdge[1]) #Superior-Esq
 bloqueio2 = GameImage(s.borderEdge[0]) #Lateral-Esq
 bloqueio3 = GameImage(s.borderEdge[0]) #Lateral-Dir
+bloqueio4 = GameImage(s.borderEdge[1])#Superior-Dir
 bloqueio1.set_position(tile, 0)
 bloqueio3.set_position(fundo.width-tile, 0)
 bloqueio2.set_position(0, 0)
+bloqueio4.set_position(bloqueio1.x+bloqueio1.width+tile*4,bloqueio1.y)
+
+
+#gambiarra_foda:
+bloco_esquerda = GameImage(s.gambiarra_bloco)
+bloco_direita = GameImage(s.gambiarra_bloco)
+
+bloco_esquerda.set_position(bloqueio1.x+bloqueio1.width-tile,bloqueio1.y-tile)
+bloco_direita.set_position(bloqueio4.x,bloqueio4.y)
 
 
 #Grama
@@ -73,11 +88,100 @@ arvore_1 = GameImage(s.cenario[1])
 arvore_2 = GameImage(s.cenario[2])
 arvore_3 = GameImage(s.cenario[3])
 arvore_4 = GameImage(s.cenario[2])
+arvore_spawn = GameImage(s.cenario[1])
 
 arvore_1.set_position(tile,bloqueio1.height)
 arvore_2.set_position(tile,arvore_1.height)
 arvore_3.set_position(fundo.width-tile*4,bloqueio1.height)
 arvore_4.set_position(arvore_3.x,arvore_3.height)
+arvore_spawn.set_position(fundo.width/2,arvore_4.y+arvore_4.height)
+
+#----RECURSOS----#
+
+def spawn(png,x,y):
+    imagem = GameImage(png)
+    imagem.set_position(x,y)
+    return imagem
+
+
+
+
+def vetor_de_madeira(arvore,tempo):
+    a = s.recursos[3]
+    x = arvore.x
+    y = arvore.y
+    madeiras = [spawn(a,x-tile,y-tile),spawn(a,x,y-tile),spawn(a,x+tile,y-tile),spawn(a,x+tile*2,y-tile),spawn(a,x+tile*3,y-tile),
+                spawn(a,x-tile,y),spawn(a,x+tile*3,y),
+                spawn(a, x - tile, y+tile), spawn(a, x + tile * 3, y+tile),
+                spawn(a, x - tile, y + tile*2), spawn(a, x + tile * 3, y + tile*2),
+                spawn(a, x - tile, y+tile*3), spawn(a, x + tile * 3, y+tile*3),
+                spawn(a, x - tile, y+tile*4), spawn(a, x, y+tile*4), spawn(a, x + tile, y+tile*4),spawn(a, x + tile * 2, y+tile*4), spawn(a, x + tile * 3, y+tile*4)]
+    for i in range(len(madeiras)):
+      if not colisao_pplay.collided(player,madeiras[i]) and s.estado_madeira[i]:
+        madeiras[i].draw()
+      elif colisao_pplay.collided(player,madeiras[i]) and s.estado_madeira[i]:
+          s.quantidade_de_recursos[3] += 1
+          s.estado_madeira[i] = False
+      if not s.estado_madeira[i] and tempo > s.loops:
+          s.estado_madeira[i] = True
+
+
+
+#-------------------------------------------------HUD--------------------------------------#
+HP = Animation(s.hud[0],11)
+HP.set_total_duration(1000)
+HP.set_position(0,0)
+
+quantidade_HUD_madeira = Sprite(s.hud[1])
+quantidade_HUD_madeira.set_position(HP.x+quantidade_HUD_madeira.width,HP.y+HP.height+tile-(quantidade_HUD_madeira.height/2))
+
+madeira_HUD = Sprite(s.hud[2])
+madeira_HUD.set_position(quantidade_HUD_madeira.x+quantidade_HUD_madeira.width-tile,quantidade_HUD_madeira.y)
+
+ouro_HUD = Sprite(s.hud[3])
+ouro_HUD.set_position(madeira_HUD.x,madeira_HUD.y+madeira_HUD.height+tile/2)
+
+quantidade_HUD_ouro = Sprite(s.hud[1])
+quantidade_HUD_ouro.set_position(quantidade_HUD_madeira.x,quantidade_HUD_madeira.y+quantidade_HUD_madeira.height+tile/2)
+
+quantidade_HUD_pedra_coletavel = Sprite(s.hud[1])
+quantidade_HUD_pedra_coletavel.set_position(ouro_HUD.x+ouro_HUD.width,ouro_HUD.y+ouro_HUD.height+tile/2)
+
+pedra_coletavel_HUD = Sprite(s.hud[5])
+pedra_coletavel_HUD.set_position(ouro_HUD.x,ouro_HUD.y+ouro_HUD.height+tile/2)
+
+ferro_HUD = Sprite(s.hud[4])
+ferro_HUD.set_position(pedra_coletavel_HUD.x,pedra_coletavel_HUD.y+pedra_coletavel_HUD.height+tile/2)
+
+quantidade_HUD_ferro = Sprite(s.hud[1])
+quantidade_HUD_ferro.set_position(ouro_HUD.x+ouro_HUD.width,pedra_coletavel_HUD.y+pedra_coletavel_HUD.height+tile/2)
+
+cobre_HUD = Sprite(s.hud[6])
+cobre_HUD.set_position(ferro_HUD.x,ferro_HUD.y+ferro_HUD.height+tile/2)
+
+quantidade_HUD_cobre = Sprite(s.hud[1])
+quantidade_HUD_cobre.set_position(cobre_HUD.x+cobre_HUD.width,ferro_HUD.y+ferro_HUD.height+tile/2)
+
+HUD_materials = [quantidade_HUD_ouro,quantidade_HUD_madeira,quantidade_HUD_pedra_coletavel,madeira_HUD,ouro_HUD,pedra_coletavel_HUD,ferro_HUD,quantidade_HUD_ferro,quantidade_HUD_cobre,cobre_HUD]
+
+
+#mostrar o HUD ao teclar 0
+def show_hud(pedra,madeira,ferro,cobre,ouro):
+    if k.key_pressed("0"):
+        draw_sprite(HUD_materials)
+        janela.draw_text(str(madeira), quantidade_HUD_madeira.x + quantidade_HUD_madeira.width, quantidade_HUD_madeira.y,
+                     s.text[1], s.text[0], s.text[2])
+        janela.draw_text(str(ouro), quantidade_HUD_ouro.x + quantidade_HUD_ouro.width, quantidade_HUD_ouro.y, s.text[1],
+                     s.text[0], s.text[2])
+        janela.draw_text(str(pedra), quantidade_HUD_pedra_coletavel.x + quantidade_HUD_pedra_coletavel.width, quantidade_HUD_pedra_coletavel.y, s.text[1],
+                         s.text[0], s.text[2])
+        janela.draw_text(str(ferro), quantidade_HUD_ferro.x + quantidade_HUD_ferro.width,
+                         quantidade_HUD_ferro.y, s.text[1],
+                         s.text[0], s.text[2])
+        janela.draw_text(str(cobre), quantidade_HUD_cobre.x + quantidade_HUD_cobre.width,
+                         quantidade_HUD_cobre.y, s.text[1],
+                         s.text[0], s.text[2])
+
 
 #Habilidades:
 """
@@ -92,13 +196,13 @@ habilidade_atual = [GameImage(s.COH[0]), GameImage(s.SNH[1]), GameImage(s.SNH[2]
                     GameImage(s.SNH[13]), GameImage(s.SNH[14]), GameImage(s.SNH[15]), GameImage(s.SNH[16]), GameImage(s.SNH[17]), GameImage(s.SNH[18])]
 
 #Appendes do BG:
-nao_colidiveis = [fundo, grama, monster_spawn]
-colidiveis_esq = [bloqueio2]
-colidiveis_dir = [bloqueio3]
-colidiveis_cima = [bloqueio1]
-colidiveis_baixo = [agua]
-colidiveis = [arvore_1, arvore_2, arvore_3, arvore_4, pedra_de_5_lados]
-bg_total = nao_colidiveis + colidiveis + colidiveis_cima + colidiveis_baixo + colidiveis_dir + colidiveis_esq
+nao_colidiveis = [fundo, grama,monster_spawn]
+colidiveis = [bloqueio1, bloqueio2, bloqueio3,bloqueio4,arvore_1,arvore_2,agua,arvore_3,arvore_4,pedra_de_5_lados,bloco_esquerda,bloco_direita,arvore_spawn]
+colidiveis_esquerda = [arvore_1,arvore_2,pedra_de_5_lados,bloqueio2,bloco_esquerda,bloqueio1,arvore_spawn]
+colidiveis_baixo =[agua,pedra_de_5_lados,arvore_spawn]
+colidiveis_direita =[arvore_3,arvore_4,bloqueio3,pedra_de_5_lados,bloco_direita,bloqueio4,arvore_spawn]
+colidiveis_cima =[pedra_de_5_lados,bloqueio1,arvore_2,arvore_4,bloqueio4,arvore_spawn]
+bg_total = nao_colidiveis + colidiveis
 
 #centralizar objeto em relacao a janela
 def centralizar_w(obj, quadro):
@@ -189,75 +293,125 @@ def trocar_sprite_hab(old, pos ,op):
     else:
         return 0
 
-#Collisions
+#-----Collisions----#
+
+s.andar_cima = s.andar_cima = s.andar_esquerda = s.andar_baixo = True
+
 def colisao_direita(atr,player):
-    for i in range(len(atr)):
-        if colisao_pplay.collided_perfect(player, atr[i]):
-            s.andar_direita = False
-            s.andar_baixo = True
-            s.andar_cima = True
-            s.andar_esquerda = True
-            return True
+    s.andar_direita = s.andar_cima = s.andar_esquerda = s.andar_baixo = True
+    for i in range(0,len(atr)):
+        if (player.y >= atr[i].y or player.y+player.height > atr[i].y) and  player.y < atr[i].y+atr[i].height and atr[i].x-player.x >=0:
+            if player.x+player.width+350*janela.delta_time() >= atr[i].x:
+                s.andar_direita = False
+                return True
+            else:
+                 print(i)
+                 print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
     s.andar_direita = True
-    s.andar_baixo = True
-    s.andar_cima = True
+    return False
+
+def colisao_esquerda(atr,player):
+    s.andar_direita = s.andar_cima = s.andar_esquerda = s.andar_baixo = True
+    for i in range(len(atr)):
+        if (player.y >= atr[i].y or player.y+player.height > atr[i].y) and player.y <= atr[i].y + atr[i].height: # Player está entre o objeto(eixo vertical)
+            if atr[i].x+atr[i].width <= player.x: # o ponto mais a direita(que é o que pode colidir com player) é menor que a posição atual de player(o que deve acontecer, porque se isso da false é pq o objeto está a direita de player,logo, não pode colidir pela esquerda)
+                if player.x-350*janela.delta_time() <= atr[i].x+atr[i].width:
+                    s.andar_esquerda = False
+                    print(atr[i].x,atr[i].y,player.x+player.width,player.y,atr[i].height)
+                    return True
+            else:
+                 print(i)
+                 print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
     s.andar_esquerda = True
     return False
 
-#Obejto_1 colide com objeto_2 pela esqueda no proximo loop?:
-def range_esq(obj_1, obj_2, time):
-    if obj_1.x-time >= obj_2.x+obj_2.width:
-        return True
-    return False
 
-def colisao_esquerda(atr, player):
-    #vel = 350 * janela.delta_time()
-    for i in range(len(atr)):
-        if colisao_pplay.collided_perfect(player, atr[i]):
-            s.andar_direita = True
-            s.andar_baixo = True
-            s.andar_cima = True
-            s.andar_esquerda = False
-            return True
-    s.andar_direita = True
-    s.andar_baixo = True
+def colisao_cima(atr,player):
+    s.andar_direita = s.andar_cima = s.andar_esquerda = s.andar_baixo = True
+    for i in range(0,len(atr)):
+        if player.x+player.width >= atr[i].x and player.x <= atr[i].x+atr[i].width and player.y >= atr[i].y+atr[i].height:
+            if player.y-350*janela.delta_time() <= atr[i].y+atr[i].height:
+                s.andar_cima = False
+                return True
+            else:
+                 print(i)
+                 print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
     s.andar_cima = True
-    s.andar_esquerda = True
-    return False
-
-def range_cima(obj_1, obj_2):
-    print(obj_1.y, " ", obj_2.y, " ", obj_2.height)
-    if obj_1.y-5 <= obj_2.y+obj_2.height:
-        return True
-    return False
-
-def colisao_cima(atr, player):
-    for i in range(len(atr)):
-        if colisao_pplay.collided_perfect(player, atr[i]):
-            s.andar_direita = True
-            s.andar_baixo = True
-            s.andar_cima = False
-            s.andar_esquerda = True
-            return True
-    s.andar_direita = True
-    s.andar_baixo = True
-    s.andar_cima = True
-    s.andar_esquerda = True
     return False
 
 def colisao_baixo(atr,player):
-    for i in range(len(atr)):
-        if colisao_pplay.collided_perfect(player, atr[i]):
-            s.andar_direita = True
-            s.andar_baixo = False
-            s.andar_cima = True
-            s.andar_esquerda = True
-            return True
-    s.andar_direita = True
+    s.andar_direita = s.andar_cima = s.andar_esquerda = s.andar_baixo= True
+    for i in range(0,len(atr)):
+        if player.x >= atr[i].x and player.x <= atr[i].x+atr[i].width and player.y+player.height < atr[i].y :
+            if player.y+player.height+350*janela.delta_time() >= atr[i].y:
+                s.andar_baixo = False
+                return True
+            else:
+                 print(i)
+                 print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
     s.andar_baixo = True
-    s.andar_cima = True
-    s.andar_esquerda = True
     return False
+
+
+
+
+#------MONSTROS-----#
+
+def monster_move(constru, monstro,player):
+    if s.tem_construcao:
+        if constru.x < monstro.x:
+            if not colisao_esquerda(colidiveis_esquerda,monstro):
+                monstro.x -= 1
+            else:
+                monstro.y += 1
+        elif constru.x > monstro.x:
+            if not colisao_direita(colidiveis_direita,monstro):
+                monstro.x += 1
+            else:
+                monstro.y += 1
+        else:
+            if constru.y < monstro.y:
+                monstro.y -= 1
+            elif constru.y > monstro.y:
+                monstro.y += 1
+            else:
+                return True
+    else:
+        if player.x < monstro.x:
+            if not colisao_esquerda(colidiveis_esquerda,monstro):
+                monstro.x -= 1
+            else:
+                monstro.y += 1
+        elif player.x > monstro.x:
+            if not colisao_direita(colidiveis_direita,monstro):
+                monstro.x += 1
+            else:
+                monstro.y += 1
+        else:
+            if player.y < monstro.y:
+                monstro.y -= 1
+            elif player.y > monstro.y:
+                monstro.y += 1
+
+
+def destroi_construcao(atual):
+    if monster_move(s.construcao,s.monstro[atual]):
+        s.duracao_tempo -= 1
+        if s.duracao_tempo == 0:
+            s.tem_construcao = False
+
+#--------------------CONSTRUÇÃO--------------------#
+
+def constroi_maquina(x,y):
+    if s.quantidade_de_recursos[3] >= 10:
+        s.quantidade_de_recursos[3] -=10
+        s.tem_construcao = True
+        s.construcao = spawn(s.maquina,a,b)
+
+
+
+
+
 
 #Appendes do Cenario:
 
@@ -287,31 +441,54 @@ def movimento_objet(atr, mov, orien):
             atr[i].y += velocidade
         #res.y -= velocidade
 
-def andar():
+def andar(direcao_player):
     if k.key_pressed("A") or k.key_pressed("LEFT") and s.andar_esquerda: #<-
-        if not colisao_esquerda(colidiveis+colidiveis_esq,player):
+
+        '''
+        if (fundo.x + player.x >= 0):
+            player.x -= 1
+        else:
+        '''
+        if not colisao_esquerda(colidiveis_esquerda,player):
             movimento_objet(bg_total, 1, 'x')
+            direcao_player = 2
+            player.update()
         else:
             movimento_objet(bg_total, -1,'x')
+            s.andar_esquerda = False
 
 
     elif k.key_pressed("D") or k.key_pressed("RIGHT") and s.andar_direita: #->
-        if not colisao_direita(colidiveis+colidiveis_dir,player):
+        '''
+        if (fundo.x + player.x <= 0 ):
+            player.x += 1
+        else:
+        '''
+        if not colisao_direita(colidiveis_direita,player):
             movimento_objet(bg_total, -1, 'x')
+            direcao_player = 1
+            player.update()
         else:
             movimento_objet(bg_total, 1,'x')
+            s.andar_direita = False
 
-    elif k.key_pressed("S") or k.key_pressed("DOWN") and s.andar_baixo: #\/
-        if not colisao_baixo(colidiveis+colidiveis_baixo, player):
+    elif k.key_pressed("S") or k.key_pressed("DOWN") and s.andar_baixo:
+        if not colisao_baixo(colidiveis_baixo, player):
             movimento_objet(bg_total, 1, 'y')
+            direcao_player = 0
+            player.update()
         else:
             movimento_objet(bg_total,-1,'y')
+            s.andar_baixo = False
 
-    elif k.key_pressed("W") or k.key_pressed("UP") and s.andar_cima: #/\
-        if not colisao_cima(colidiveis+colidiveis_cima, player):
+    elif k.key_pressed("W") or k.key_pressed("UP") and s.andar_cima:
+        if not colisao_cima(colidiveis_cima, player):
             movimento_objet(bg_total, -1, 'y')
+            direcao_player = 3
+            player.update()
         else:
-            movimento_objet(bg_total,1 ,'y')
+            movimento_objet(bg_total,1,'y')
+            s.andar_cima = False
 
 def liberar_habilidade(hab):
     for i in range(len(hab)):
@@ -403,14 +580,39 @@ def opcoes():
 
 def update():
     janela.set_title(str(janela.delta_time()))
-    andar()
+    andar(direcao_player)
     player.draw()
     opcoes()
     janela.update()
 
+#frame é nossa unidade de tempo, ela define quando damos spawn nas coisas
+frame = 0
 while True:
+    frame += 1
     click_call()
     background_da_janela.draw()
     draw_sprite(bg_total)
-    #print("E: ",s.andar_esquerda,"D: ",s.andar_direita,"C: ",s.andar_cima,"B: ",s.andar_baixo)
+    vetor_de_madeira(arvore_spawn, frame)
+    if frame > 1001:
+        frame = 0
+        s.monstro.append(
+            spawn('aranha.png', monster_spawn.x + monster_spawn.width / 2, monster_spawn.y + monster_spawn.height / 2))
+        s.tem_monstro.append(True)
+
+    HP.draw()
+    show_hud(10, s.quantidade_de_recursos[3], 20, 30, 40)
+
+    if s.tem_construcao:
+        s.construcao.draw()
+
+
+    if k.key_pressed("B"):
+        constroi_maquina(arvore_spawn.x+tile,arvore_spawn.y+tile)
+
+    for i in range(len(s.monstro)):
+        if s.tem_monstro[i]:
+            monster_move(arvore_1, s.monstro[i], player)
+            s.monstro[i].draw()
+    # print("E: ",s.andar_esquerda,"D: ",s.andar_direita,"C: ",s.andar_cima,"B: ",s.andar_baixo)
+
     update()

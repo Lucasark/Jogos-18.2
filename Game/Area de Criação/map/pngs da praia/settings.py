@@ -72,11 +72,14 @@ ferramenta_press = False
 #VOLTARP = 'voltarP.png'
 
 #PLAYER SETTINGS:
-player = 'tile001.png'
+player = ['personagem_baixo.png','personagem_direita.png','personagem_esquerda.png','personagem_cima.png']
 andar_cima = True
 andar_baixo = True
 andar_esquerda = True
 andar_direita = True
+
+#direção_player define qual animação deveria ser usada no movimento
+direcao_player = 0
 
 #CLICK:
 CLICK_TIME = 0
@@ -88,4 +91,46 @@ CLICK_SIGNAL = True #True -> Pode clickar -- False-> Nao pode clickar
 VIDA = 0
 EXPERIENCIA = 0
 TIME_TO_EXPERIENCIA = 0
+
+
+#------ISAAC-----#
+
+#-------------------------MATERIAIS---------------------------------------#
+
+recursos = ['ferro.png','ouro.png','cobre.png','madeira.png','pedra_coletavel.png']
+
+quantidade_de_recursos = [0,0,0,0,0]
+
+
+estado_madeira = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+loops = 2000
+
+
+
+#---cantinho exclusivo da gambiarra----#
+
+gambiarra_bloco = "player_rect.png"
+
+#--------------------HUD--------------------#
+
+hud =['hud_hp.png','hud_X.png','madeira_HUD.png','ouro_HUD.png','ferro_HUD.png','pedra_coletavel_HUD.png','cobre_HUD.png']
+
+
+#TEXTO
+text =[(255,255,255),16,"Space Mono"]
+# text = [ cor, tamanho da fonte, tipo da fonte ]
+
+
+#-----------------MONSTRO---------------#
+
+duracao_tempo = 20000
+
+
+monstro = []
+tem_monstro = []
+tem_construcao = False
+
+#-----------------MÁQUINA---------------#
+
+maquina = 'alavanca2.png'
 
