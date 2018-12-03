@@ -123,14 +123,15 @@ text =[(255,255,255),16,"Space Mono"]
 
 #-----------------MONSTRO---------------#
 
-duracao_tempo = 20000
+duracao_tempo = 2000
 
 
 monstro = []
 tem_monstro = []
-tem_construcao = False
+tem_construcao = []
 
 #-----------------MÁQUINA---------------#
 
 maquina = 'alavanca2.png'
+
 

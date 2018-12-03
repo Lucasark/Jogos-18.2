@@ -357,25 +357,21 @@ def colisao_baixo(atr,player):
 
 #------MONSTROS-----#
 
-def monster_move(constru, monstro,player):
+def monster_move(constru, monstro):
     if s.tem_construcao:
-        if constru.x < monstro.x:
-            if not colisao_esquerda(colidiveis_esquerda,monstro):
-                monstro.x -= 1
-            else:
-                monstro.y += 1
-        elif constru.x > monstro.x:
-            if not colisao_direita(colidiveis_direita,monstro):
-                monstro.x += 1
-            else:
-                monstro.y += 1
-        else:
-            if constru.y < monstro.y:
-                monstro.y -= 1
-            elif constru.y > monstro.y:
-                monstro.y += 1
-            else:
-                return True
+        if constru.x < monstro.x and constru.y < monstro.y:
+            monstro.x -= 1
+            monstro.y -= 1
+        elif constru.x > monstro.x and constru.y < monstro.y:
+            monstro.x += 1
+            monstro.y -= 1
+        elif constru.x > monstro.x and constru.y > monstro.y:
+            monstro.x += 1
+            monstro.y += 1
+        elif constru.x < monstro.x and constru.y > monstro.y:
+            monstro.x -= 1
+            monstro.y += 1
+        return colisao_pplay.collided(monstro,constru)
     else:
         if player.x < monstro.x:
             if not colisao_esquerda(colidiveis_esquerda,monstro):
@@ -394,11 +390,12 @@ def monster_move(constru, monstro,player):
                 monstro.y += 1
 
 
+
 def destroi_construcao(atual):
     if monster_move(s.construcao,s.monstro[atual]):
         s.duracao_tempo -= 1
         if s.duracao_tempo == 0:
-            s.tem_construcao = False
+            s.tem_construcao[atual] = False
 
 #--------------------CONSTRUÇÃO--------------------#
 
@@ -406,8 +403,8 @@ def constroi_maquina(x,y):
     if s.quantidade_de_recursos[3] >= 10:
         s.quantidade_de_recursos[3] -=10
         s.tem_construcao = True
-        s.construcao = spawn(s.maquina,a,b)
-
+        s.construcao.append(spawn(s.maquina,x,y))
+        bg_total.append(s.construcao)
 
 
 
@@ -583,10 +580,12 @@ def update():
     andar(direcao_player)
     player.draw()
     opcoes()
+    destroi_construcao(atual)
     janela.update()
 
 #frame é nossa unidade de tempo, ela define quando damos spawn nas coisas
 frame = 0
+monstros_desenhados = 0
 while True:
     frame += 1
     click_call()
@@ -595,8 +594,9 @@ while True:
     vetor_de_madeira(arvore_spawn, frame)
     if frame > 1001:
         frame = 0
-        s.monstro.append(
-            spawn('aranha.png', monster_spawn.x + monster_spawn.width / 2, monster_spawn.y + monster_spawn.height / 2))
+        s.monstro.append(spawn('aranha.png', monster_spawn.x + monster_spawn.width / 2, monster_spawn.y + monster_spawn.height / 2))
+        bg_total.append(s.monstro[monstros_desenhados])
+        monstros_desenhados += 1
         s.tem_monstro.append(True)
 
     HP.draw()
@@ -607,11 +607,13 @@ while True:
 
 
     if k.key_pressed("B"):
-        constroi_maquina(arvore_spawn.x+tile,arvore_spawn.y+tile)
+        constroi_maquina(player.x, player.y)
+        for i in range(len(s.construcao)):
+            s.construcao[i].draw()
 
     for i in range(len(s.monstro)):
         if s.tem_monstro[i]:
-            monster_move(arvore_1, s.monstro[i], player)
+            monster_move(s.construcao, s.monstro[i])
             s.monstro[i].draw()
     # print("E: ",s.andar_esquerda,"D: ",s.andar_direita,"C: ",s.andar_cima,"B: ",s.andar_baixo)
 
