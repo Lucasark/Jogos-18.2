@@ -9,8 +9,8 @@ DIFICULDADE_GAME = 1
 
 #Tela
 # Suporte no 16:9 -> 720,480 - 1280,720
-WIDTH = 1280
-HEIGHT = 720
+WIDTH = 900
+HEIGHT = 700
 
 #PNG
 
@@ -31,45 +31,46 @@ background_do_background = 'fundo_forcado.png'
 #HABILIDAEDS:
 bg_habilidades = "bg_habilidades.png"
 habilidade_press = False
-#SNH = 'SNH1.png'
 
 #Bloqueado
-SNH = ['SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png',
-       'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png',
-       'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png', 'SNH1.png']
+SNH = ['SNH0.png', 'SNH1.png', 'SNH2.png', 'SNH3.png', 'SNH4.png', 'SNH5.png', 'SNH6.png',
+       'SNHD.png', 'SNHD.png', 'SNHD.png', 'SNHD.png', 'SNHD.png', 'SNHD.png', 'SNHD.png',
+       'SNHD.png', 'SNHD.png', 'SNHD.png', 'SNHD.png', 'SNHD.png', 'SNHD.png', 'SNHD.png']
 #Comprados
-CIH = ['CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png',
-       'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png',
-       'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png', 'CIH1.png']
+CIH = ['CIH0.png', 'CIH1.png', 'CIH2.png', 'CIH3.png', 'CIH4.png', 'CIH5.png', 'CIH6.png',
+       'CIHD.png', 'CIHD.png', 'CIHD.png', 'CIHD.png', 'CIHD.png', 'CIHD.png', 'CIHD.png',
+       'CIHD.png', 'CIHD.png', 'CIHD.png', 'CIHD.png', 'CIHD.png', 'CIHD.png', 'CIHD.png']
 
 #Livres
-COH = ['COH1.png', 'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png',
-       'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png',
-       'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png', 'COH1.png']
+COH = ['COH0.png', 'COH1.png', 'COH2.png', 'COH3.png', 'COH4.png', 'COH5.png', 'COH6.png',
+       'COHD.png', 'COHD.png', 'COHD.png', 'COHD.png', 'COHD.png', 'COHD.png', 'COHD.png',
+       'COHD.png', 'COHD.png', 'COHD.png', 'COHD.png', 'COHD.png', 'COHD.png', 'COHD.png']
 
 HABILIDADE_STATUS = [0, -1, -1, -1, -1, -1,
                      -1, -1, -1, -1, -1, -1,
-                     -1, -1, -1, -1, -1, -1]
+                     -1, -1, -1, -1, -1, -1, -1]
 
 HABILIDADE_LIBERAR = [[1,2,3],[4,5],[6,7],[8,9],[10,11],[11,12],[13,14],[14,15],[16,17],[17,18],
                       [],[],[],[],[],[],[],[],[]]
 
-HABILIDADE_TURN = [False, False, False, False]
+#HABILIDADE_TURN = [False, False, False, False]
 
 
 #FERRAMENTAS:
-bg_ferramenta = "bg_habilidades.png"
+bg_ferramenta = "bg_ferramentas.png"
 ferramenta_press = False
-
-
-#Buttoes
-#menus = ['iniciar.png', 'placar.png', 'dificuldade.png', 'sair.png']
-#menusP = ['iniciarP.png', 'placarP.png', 'dificuldadeP.png', 'sairP.png']
-#DIF = ['D1.png','D2.png','D3.png']
-#DIFP = ['D1P.png','D2P.png','D3P.png']
-#DIFS = ['D1S.png','D2S.png','D3S.png']
-#VOLTAR = 'voltar.png'
-#VOLTARP = 'voltarP.png'
+FERRAMENTAS_OPEN = [False,False,False,False,False]
+#0 -> BOMBA
+#1 -> REFINADOR 1 (MADEIRA LASCADA)
+#2 -> REFINADOR 2 (PEDRA LASCADA)
+#3 -> REFINADOR 3 (MADEIRA L. + PEDRA L.)
+#4 -> RADIO LVL1
+FERRAMENTAS_BUTTON = ['F1.png', 'F2.png', 'F3.png', 'F4.png', 'F5.png']
+#----PAGINA-1-----#
+FPAGINA1 = True
+#----PAGINA-2-----#
+FPAGINA2 = False
+FERRRAMENTA_JANELA = ['FIR.png','FVOLTAR.png']
 
 #PLAYER SETTINGS:
 player = ['personagem_baixo.png','personagem_direita.png','personagem_esquerda.png','personagem_cima.png']
@@ -89,17 +90,25 @@ CLICK_SIGNAL = True #True -> Pode clickar -- False-> Nao pode clickar
 
 #PLAYER PARAMETROS:
 VIDA = 0
-EXPERIENCIA = 0
-TIME_TO_EXPERIENCIA = 0
-
-
-#------ISAAC-----#
+EXPERIENCIA = 100
+TIME_TO_EXPERIENCIA = 50
+LOOK_EXPERIENCIA = 50 #pode multiplar pela dificuldade
 
 #-------------------------MATERIAIS---------------------------------------#
+PODEMADEIRA = False
+PODEPEDRA = False
+PODEFERRO = False
 
 recursos = ['ferro.png','ouro.png','cobre.png','madeira.png','pedra_coletavel.png']
-
-quantidade_de_recursos = [0,0,0,0,0]
+#0-> FERRO
+#1-> OURO
+#2-> COBRE
+#3-> MADEIRA
+#4-> PEDRA
+#5-> MADEIRA_REFINADA
+#6-> PEDRA_REFINADA
+#7-> P+M
+quantidade_de_recursos = [0,0,0,0,0,0,0,0]
 
 
 estado_madeira = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
@@ -125,13 +134,50 @@ text =[(255,255,255),16,"Space Mono"]
 
 duracao_tempo = 2000
 
-
 monstro = []
 tem_monstro = []
 tem_construcao = []
+construcao = []
 
 #-----------------MÁQUINA---------------#
 
 maquina = 'alavanca2.png'
+MAQUINA_REFINADORA_MADEIRA = False
+POS_MADEIRA = []
+TIME_MADEIRA = []
+TIME_ALL_MADEIRA = 20
+LOCK_MADEIRA = []
+
+maquina2 = ''
+MAQUINA_REFINADORA_PEDRA = False
+POS_PEDRA = []
+TIME_PEDRA = []
+TIME_ALL_PEDRA = 20
+LOCK_PEDRA = []
+
+maquina3 = ''
+MAQUINA_REFINADORA_PM = False
+POS_MD = []
+TIME_PM = []
+TIME_ALL_PM = 20
+LOCK_PM = []
+
+#-----------------OBEJTOS-------------#
+bomba = ''
+BOMBA = False
+POS_BOMBA = []
+TIME_BOMBA = []
+TIME_ALL_BOMBA = 100
+LOCK_BOMBA = []
+
+radio1 = ''
+RADIO1 = False
+
+#---------------TELA-----------#
+INICIAR = 'iniciar.png'
+NOME = 'Nome.png'
+MENU = True
+GAME = False
+
 
 

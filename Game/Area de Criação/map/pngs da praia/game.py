@@ -34,9 +34,6 @@ velocidade = 250*janela.delta_time()
 #colisao
 colisao_pplay = Collision()
 
-
-
-#TILE - o uso do numero 32, graças a sua motherfucking lógica de uso de tiles ta sendo bem conveniente, então pro professor não ficar "ui ta usando número absoluto" eu to declarando uma variavel
 tile = 32
 
 #SET_POSITION: PLAYER
@@ -104,8 +101,6 @@ def spawn(png,x,y):
     return imagem
 
 
-
-
 def vetor_de_madeira(arvore,tempo):
     a = s.recursos[3]
     x = arvore.x
@@ -119,7 +114,8 @@ def vetor_de_madeira(arvore,tempo):
     for i in range(len(madeiras)):
       if not colisao_pplay.collided(player,madeiras[i]) and s.estado_madeira[i]:
         madeiras[i].draw()
-      elif colisao_pplay.collided(player,madeiras[i]) and s.estado_madeira[i]:
+        #break
+      elif colisao_pplay.collided(player,madeiras[i]) and s.estado_madeira[i] and s.PODEMADEIRA:
           s.quantidade_de_recursos[3] += 1
           s.estado_madeira[i] = False
       if not s.estado_madeira[i] and tempo > s.loops:
@@ -191,9 +187,12 @@ def show_hud(pedra,madeira,ferro,cobre,ouro):
 [0]     ->  Liberados: Imagem Colorida [CO], liberado para compra
 
 """
-habilidade_atual = [GameImage(s.COH[0]), GameImage(s.SNH[1]), GameImage(s.SNH[2]), GameImage(s.SNH[4]), GameImage(s.SNH[5]), GameImage(s.SNH[6]),
+habilidade_atual = [GameImage(s.COH[0]), GameImage(s.SNH[1]), GameImage(s.SNH[2]), GameImage(s.SNH[3]), GameImage(s.SNH[4]), GameImage(s.SNH[5]), GameImage(s.SNH[6]),
                     GameImage(s.SNH[7]), GameImage(s.SNH[8]), GameImage(s.SNH[9]), GameImage(s.SNH[10]), GameImage(s.SNH[11]), GameImage(s.SNH[12]),
                     GameImage(s.SNH[13]), GameImage(s.SNH[14]), GameImage(s.SNH[15]), GameImage(s.SNH[16]), GameImage(s.SNH[17]), GameImage(s.SNH[18])]
+ferramenta_pagina_1 = [GameImage(s.FERRAMENTAS_BUTTON[0]), GameImage(s.FERRAMENTAS_BUTTON[1]), GameImage(s.FERRAMENTAS_BUTTON[2])]
+ferramenta_pagina_2 = [GameImage(s.FERRAMENTAS_BUTTON[3]), GameImage(s.FERRAMENTAS_BUTTON[4])]
+ferramenta_button = [GameImage(s.FERRRAMENTA_JANELA[0]), GameImage(s.FERRRAMENTA_JANELA[1])]
 
 #Appendes do BG:
 nao_colidiveis = [fundo, grama,monster_spawn]
@@ -203,6 +202,10 @@ colidiveis_baixo =[agua,pedra_de_5_lados,arvore_spawn]
 colidiveis_direita =[arvore_3,arvore_4,bloqueio3,pedra_de_5_lados,bloco_direita,bloqueio4,arvore_spawn]
 colidiveis_cima =[pedra_de_5_lados,bloqueio1,arvore_2,arvore_4,bloqueio4,arvore_spawn]
 bg_total = nao_colidiveis + colidiveis
+
+nome = GameImage(s.NOME)
+butao_inicar = GameImage(s.INICIAR)
+
 
 #centralizar objeto em relacao a janela
 def centralizar_w(obj, quadro):
@@ -241,19 +244,42 @@ habilidade_atual[4].set_position(habilidade_atual[3].x, pos_relativo_h_neg(habil
 habilidade_atual[5].set_position(habilidade_atual[2].x, pos_relativo_h_neg(habilidade_atual[1], habilidade_atual[4], 32))
 habilidade_atual[6].set_position(pos_relativo_w(habilidade_atual[2], 32), habilidade_atual[2].y)
 habilidade_atual[7].set_position(habilidade_atual[2].x, pos_relativo_h(habilidade_atual[2], 32))
-#habilidade_atual[8].set_position()
-#habilidade_atual[9].set_position()
-#habilidade_atual[10].set_position()
-#habilidade_atual[11].set_position()
-#habilidade_atual[12].set_position()
+habilidade_atual[8].set_position(habilidade_atual[3].x, habilidade_atual[7].y)
+habilidade_atual[9].set_position(pos_relativo_w_neg(habilidade_atual[3], habilidade_atual[9], 32), habilidade_atual[3].y)
+habilidade_atual[10].set_position(pos_relativo_w_neg(habilidade_atual[4], habilidade_atual[10], 16), pos_relativo_h_neg(habilidade_atual[4], habilidade_atual[10], 16),)
+habilidade_atual[11].set_position(habilidade_atual[0].x, habilidade_atual[10].y)
+habilidade_atual[12].set_position(pos_relativo_w(habilidade_atual[5], 16),pos_relativo_h_neg(habilidade_atual[5], habilidade_atual[12], 16))
 habilidade_atual[13].set_position(pos_relativo_w(habilidade_atual[6], 32), habilidade_atual[6].y)
 habilidade_atual[14].set_position(habilidade_atual[6].x + (habilidade_atual[6].width)/2, habilidade_atual[7].y + (habilidade_atual[7].height)/2)
 habilidade_atual[15].set_position(habilidade_atual[7].x, pos_relativo_h(habilidade_atual[7], 32))
-#habilidade_atual[16].set_position()
-#habilidade_atual[17].set_position()
-#habilidade_atual[18].set_position()
+habilidade_atual[16].set_position(habilidade_atual[3].x, habilidade_atual[15].y)
+habilidade_atual[18].set_position(pos_relativo_w_neg(habilidade_atual[9],habilidade_atual[18],32), habilidade_atual[9].y)
+habilidade_atual[17].set_position(habilidade_atual[18].x + (habilidade_atual[18].width), habilidade_atual[8].y + (habilidade_atual[8].height)/2)
 
 #FERRAMENTAS POSIÇÃO
+#PAGINA 1
+ferramenta_pagina_1[0].set_position(centralizar_w(ferramenta_pagina_1[0], janela), ferramenta.y + 100)
+ferramenta_pagina_1[1].set_position(ferramenta_pagina_1[0].x, pos_relativo_h(ferramenta_pagina_1[0], 32))
+ferramenta_pagina_1[2].set_position(ferramenta_pagina_1[0].x, pos_relativo_h(ferramenta_pagina_1[1], 32))
+#PAGINA 2
+ferramenta_pagina_2[0].set_position(centralizar_w(ferramenta_pagina_2[0], janela), ferramenta.y + 100)
+ferramenta_pagina_2[1].set_position(ferramenta_pagina_2[0].x, pos_relativo_h(ferramenta_pagina_2[0], 32))
+#ferramenta_pagina_2[1].set_position(ferramenta_pagina_2[0].x, pos_relativo_h(ferramenta_pagina_2[0], 32))
+
+ferramenta_button[0].set_position(ferramenta.x, ferramenta.height-ferramenta_button[0].height)
+ferramenta_button[1].set_position(ferramenta.width-ferramenta_button[1].width, ferramenta_button[0].y)
+
+#MENU
+nome.set_position(centralizar_w(nome, janela), centralizar_h(nome, janela))
+butao_inicar.set_position(centralizar_w(butao_inicar, janela), pos_relativo_h(nome, 32))
+
+#Experiencia loop
+def exp_time():
+    if s.TIME_TO_EXPERIENCIA == 0:
+        s.TIME_TO_EXPERIENCIA = s.LOOK_EXPERIENCIA*1.02
+        s.EXPERIENCIA += 1
+    else:
+        s.TIME_TO_EXPERIENCIA -= 1
 
 #Button
 def butao_click(mouse, butao):
@@ -277,7 +303,7 @@ def click_call():
         else:
             s.CLICK_TIME = 20
 
-def trocar_sprite_hab(old, pos ,op):
+def trocar_sprite_hab(old, pos, op):
     if op == 1:
         aux = GameImage(s.COH[pos])
         aux.set_position(old.x, old.y)
@@ -297,16 +323,16 @@ def trocar_sprite_hab(old, pos ,op):
 
 s.andar_cima = s.andar_cima = s.andar_esquerda = s.andar_baixo = True
 
-def colisao_direita(atr,player):
+def colisao_direita(atr, player):
     s.andar_direita = s.andar_cima = s.andar_esquerda = s.andar_baixo = True
     for i in range(0,len(atr)):
         if (player.y >= atr[i].y or player.y+player.height > atr[i].y) and  player.y < atr[i].y+atr[i].height and atr[i].x-player.x >=0:
             if player.x+player.width+350*janela.delta_time() >= atr[i].x:
                 s.andar_direita = False
                 return True
-            else:
-                 print(i)
-                 print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
+            #else:
+                 #print(i)
+                 #print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
     s.andar_direita = True
     return False
 
@@ -317,11 +343,11 @@ def colisao_esquerda(atr,player):
             if atr[i].x+atr[i].width <= player.x: # o ponto mais a direita(que é o que pode colidir com player) é menor que a posição atual de player(o que deve acontecer, porque se isso da false é pq o objeto está a direita de player,logo, não pode colidir pela esquerda)
                 if player.x-350*janela.delta_time() <= atr[i].x+atr[i].width:
                     s.andar_esquerda = False
-                    print(atr[i].x,atr[i].y,player.x+player.width,player.y,atr[i].height)
+                    #print(atr[i].x,atr[i].y,player.x+player.width,player.y,atr[i].height)
                     return True
-            else:
-                 print(i)
-                 print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
+            #else:
+                 #print(i)
+                 #print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
     s.andar_esquerda = True
     return False
 
@@ -333,9 +359,9 @@ def colisao_cima(atr,player):
             if player.y-350*janela.delta_time() <= atr[i].y+atr[i].height:
                 s.andar_cima = False
                 return True
-            else:
-                 print(i)
-                 print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
+            #else:
+                 #print(i)
+                 #print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
     s.andar_cima = True
     return False
 
@@ -346,13 +372,11 @@ def colisao_baixo(atr,player):
             if player.y+player.height+350*janela.delta_time() >= atr[i].y:
                 s.andar_baixo = False
                 return True
-            else:
-                 print(i)
-                 print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
+            #else:
+                 #print(i)
+                 #print("Object x:",atr[i].x,"object y:", atr[i].y,"player x and y:", player.x, player.y,"object height and width:", atr[i].height,atr[i].width)
     s.andar_baixo = True
     return False
-
-
 
 
 #------MONSTROS-----#
@@ -389,8 +413,6 @@ def monster_move(constru, monstro):
             elif player.y > monstro.y:
                 monstro.y += 1
 
-
-
 def destroi_construcao(atual):
     if monster_move(s.construcao,s.monstro[atual]):
         s.duracao_tempo -= 1
@@ -405,10 +427,6 @@ def constroi_maquina(x,y):
         s.tem_construcao = True
         s.construcao.append(spawn(s.maquina,x,y))
         bg_total.append(s.construcao)
-
-
-
-
 
 #Appendes do Cenario:
 
@@ -441,11 +459,6 @@ def movimento_objet(atr, mov, orien):
 def andar(direcao_player):
     if k.key_pressed("A") or k.key_pressed("LEFT") and s.andar_esquerda: #<-
 
-        '''
-        if (fundo.x + player.x >= 0):
-            player.x -= 1
-        else:
-        '''
         if not colisao_esquerda(colidiveis_esquerda,player):
             movimento_objet(bg_total, 1, 'x')
             direcao_player = 2
@@ -456,11 +469,6 @@ def andar(direcao_player):
 
 
     elif k.key_pressed("D") or k.key_pressed("RIGHT") and s.andar_direita: #->
-        '''
-        if (fundo.x + player.x <= 0 ):
-            player.x += 1
-        else:
-        '''
         if not colisao_direita(colidiveis_direita,player):
             movimento_objet(bg_total, -1, 'x')
             direcao_player = 1
@@ -494,50 +502,141 @@ def liberar_habilidade(hab):
             habilidade_atual[hab[i]] = trocar_sprite_hab(habilidade_atual[hab[i]], hab[i], 1)
             s.HABILIDADE_STATUS[hab[i]] = 0
 
+def ferramentas_action(act):
+    #BOMBA = MADEIRA 5 + PEDRA 5
+    if act == 0 and s.quantidade_de_recursos[3] >= 10 and s.quantidade_de_recursos[4] >= 10:
+        print("FERRAMENTA 0")
+        s.quantidade_de_recursos[3] -= 10
+        s.quantidade_de_recursos[4] -= 10
+
+    #MAQUINA MADEIRA REFINAR = MADEIRA 30
+    if act == 1 and s.quantidade_de_recursos[3] >= 30:
+        s.quantidade_de_recursos[3] -= 30
+        print("FERRAMENTA 1")
+
+    #MAQUINA PEDRA REFINAR = PEDRA 30
+    if act == 2 and s.quantidade_de_recursos[4] >= 30:
+        s.quantidade_de_recursos[4] -= 30
+        print("FERRAMENTA 2")
+
+    #MAQUINA M+P = MR 20 + PR 20
+    if act == 3 and s.quantidade_de_recursos[5] >= 20 and s.quantidade_de_recursos[6] >= 20:
+        s.quantidade_de_recursos[5] -= 20
+        s.quantidade_de_recursos[6] -= 20
+        print("FERRAMENTA 3")
+
+    #RADIO = M+P 20 + MR 10 + PR 10
+    if act == 4 and s.quantidade_de_recursos[5] >= 10 and s.quantidade_de_recursos[6] >= 10 and s.quantidade_de_recursos[7] >= 20:
+        s.quantidade_de_recursos[5] -= 10
+        s.quantidade_de_recursos[6] -= 10
+        s.quantidade_de_recursos[7] -= 20
+        print("FERRAMENTA 4")
+
 def habilidade_action(act):
     if act == 0:
-        print("HABILIDADE 0 EFTUADO")
+        if s.EXPERIENCIA >= 5:
+            print("HABILIDADE 0 EFTUADO")
+            s.EXPERIENCIA -= 5
+            s.PODEMADEIRA = True
+            return True
+        else:
+            return False
     elif act == 1:
-        print("HABILIDADE 1 EFTUADO")
+        if s.EXPERIENCIA >= 15:
+            print("HABILIDADE 1 EFTUADO")
+            s.PODEPEDRA = True
+            s.EXPERIENCIA -= 15
+            return True
+        else:
+            return False
     elif act == 2:
-        print("HABILIDADE 2 EFTUADO")
+        if s.EXPERIENCIA >= 15:
+            print("HABILIDADE 2 EFTUADO")
+            s.BOMBA = True
+            s.FERRAMENTAS_OPEN[0] = True
+            s.EXPERIENCIA -= 15
+            return True
+        else:
+            return False
     elif act == 3:
-        print("HABILIDADE 3 EFTUADO")
+        print("FOI")
+        if s.EXPERIENCIA >= 15:
+            print("HABILIDADE 3 EFTUADO")
+            s.MAQUINA_REFINADORA_PEDRA = True
+            s.FERRAMENTAS_OPEN[2] = True
+            s.EXPERIENCIA -= 15
+            return True
+        else:
+            return False
     elif act == 4:
-        print("HABILIDADE 4 EFTUADO")
+        if s.EXPERIENCIA >= 30:
+            print("HABILIDADE 4 EFTUADO")
+            s.MAQUINA_REFINADORA_PM = True
+            s.FERRAMENTAS_OPEN[3] = True
+            s.EXPERIENCIA -= 30
+            return True
+        else:
+            return False
     elif act == 5:
-        print("HABILIDADE 5 EFTUADO")
+        if s.EXPERIENCIA >= 30:
+            print("HABILIDADE 5 EFTUADO")
+            s.MAQUINA_REFINADORA_MADEIRA = True
+            s.FERRAMENTAS_OPEN[1] = True
+            s.EXPERIENCIA -= 30
+            return True
+        else:
+            return False
+
     elif act == 6:
-        print("HABILIDADE 6 EFTUADO")
+        if s.EXPERIENCIA >= 30:
+            print("HABILIDADE 5 EFTUADO")
+            s.RADIO1 = True
+            s.FERRAMENTAS_OPEN[4] = True
+            s.EXPERIENCIA -= 30
+            return True
+        else:
+            return False
     elif act == 7:
         print("HABILIDADE 7 EFTUADO")
+        return True
     elif act == 8:
         print("HABILIDADE 8 EFTUADO")
+        return True
     elif act == 9:
         print("HABILIDADE 9 EFTUADO")
+        return True
     elif act == 10:
         print("HABILIDADE 10 EFTUADO")
+        return True
     elif act == 11:
         print("HABILIDADE 11 EFTUADO")
+        return True
     elif act == 12:
         print("HABILIDADE 12 EFTUADO")
+        return True
     elif act == 13:
         print("HABILIDADE 13 EFTUADO")
+        return True
     elif act == 14:
         print("HABILIDADE 14 EFTUADO")
+        return True
     elif act == 15:
         print("HABILIDADE 15 EFTUADO")
+        return True
     elif act == 16:
         print("HABILIDADE 16 EFTUADO")
+        return True
     elif act == 17:
         print("HABILIDADE 17 EFTUADO")
+        return True
     elif act == 18:
         print("HABILIDADE 18 EFTUADO")
+        return True
     else:
         print("ZUOU")
+        return False
 
 def opcoes():
-    m = mouse.get_position()
     if k.key_pressed("F") and click_pause(s.CLICK_TIME_WAIT) and not s.ferramenta_press:
         print("HABILIDADES")
         if (not s.habilidade_press):
@@ -563,58 +662,92 @@ def opcoes():
             if butao_click(m, habilidade_atual[i]):  # 1
                 #printar balão
                 if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT) and s.HABILIDADE_STATUS[i] == 0:
-                    print("Habilidade", i,"Desloqueada")
-                    habilidade_action(i)
-                    habilidade_atual[i] = trocar_sprite_hab(habilidade_atual[i], i, 0)
-                    s.HABILIDADE_STATUS[i] = -1
-                    liberar_habilidade(s.HABILIDADE_LIBERAR[i])
-                    print(s.HABILIDADE_STATUS)
+                    print("Habilidade", i,"Requisitado!")
+                    if habilidade_action(i):
+                        habilidade_atual[i] = trocar_sprite_hab(habilidade_atual[i], i, 0)
+                        s.HABILIDADE_STATUS[i] = 1
+                        liberar_habilidade(s.HABILIDADE_LIBERAR[i])
+                        print(s.HABILIDADE_STATUS)
 
     if s.ferramenta_press:
         ferramenta.draw()
+        if s.FPAGINA1:
+            draw_sprite(ferramenta_pagina_1)
+            ferramenta_button[0].draw()
+            for i in range(len(ferramenta_pagina_1)):
+                if butao_click(m, ferramenta_pagina_1[i]):
+                    if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT) and s.FERRAMENTAS_OPEN:
+                        print("Ferramenta", i, "requisitado!")
+                        ferramentas_action(i)
+            if butao_click(m, ferramenta_button[0]):
+                if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT):
+                    s.FPAGINA1 = False
+                    s.FPAGINA2 = True
 
-#print(player.x, ":X - Y:", player.y,"     ",s.WIDTH,":S.W  -  F.W",fundo.width,"         ",fundo.x,":f.x   -  f.y",fundo.y)
+        if s.FPAGINA2:
+            draw_sprite(ferramenta_pagina_2)
+            ferramenta_button[1].draw()
+            for i in range(len(ferramenta_pagina_2)):
+                if butao_click(m, ferramenta_pagina_2[i]):
+                    if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT) and s.FERRAMENTAS_OPEN:
+                        print("Ferramenta", i+3, "requisitado!")
+                        ferramentas_action(i+3)
+
+            if butao_click(m, ferramenta_button[1]):
+                if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT):
+                    s.FPAGINA1 = True
+                    s.FPAGINA2 = False
 
 def update():
+    exp_time()
     janela.set_title(str(janela.delta_time()))
     andar(direcao_player)
     player.draw()
     opcoes()
-    destroi_construcao(atual)
+    #destroi_construcao(atual)
     janela.update()
 
-#frame é nossa unidade de tempo, ela define quando damos spawn nas coisas
 frame = 0
 monstros_desenhados = 0
+
 while True:
+    #print("Exp:"+str(s.EXPERIENCIA))
     frame += 1
     click_call()
     background_da_janela.draw()
-    draw_sprite(bg_total)
-    vetor_de_madeira(arvore_spawn, frame)
-    if frame > 1001:
-        frame = 0
-        s.monstro.append(spawn('aranha.png', monster_spawn.x + monster_spawn.width / 2, monster_spawn.y + monster_spawn.height / 2))
-        bg_total.append(s.monstro[monstros_desenhados])
-        monstros_desenhados += 1
-        s.tem_monstro.append(True)
+    m = mouse.get_position()
 
-    HP.draw()
-    show_hud(10, s.quantidade_de_recursos[3], 20, 30, 40)
+    if s.GAME:
+        draw_sprite(bg_total)
+        vetor_de_madeira(arvore_spawn, frame)
+        if frame > 1001:
+            frame = 0
+            s.monstro.append(spawn('aranha.png', monster_spawn.x + monster_spawn.width / 2, monster_spawn.y + monster_spawn.height / 2))
+            bg_total.append(s.monstro[monstros_desenhados])
+            monstros_desenhados += 1
+            s.tem_monstro.append(True)
 
-    if s.tem_construcao:
-        s.construcao.draw()
+        HP.draw()
+        show_hud(10, s.quantidade_de_recursos[3], 20, 30, 40)
+        if s.tem_construcao:
+            s.construcao.draw()
+        if k.key_pressed("B"):
+            constroi_maquina(player.x, player.y)
+            for i in range(len(s.construcao)):
+                s.construcao[i].draw()
 
+        for i in range(len(s.monstro)):
+            if s.tem_monstro[i]:
+                monster_move(s.construcao, s.monstro[i])
+                s.monstro[i].draw()
 
-    if k.key_pressed("B"):
-        constroi_maquina(player.x, player.y)
-        for i in range(len(s.construcao)):
-            s.construcao[i].draw()
+        update()
 
-    for i in range(len(s.monstro)):
-        if s.tem_monstro[i]:
-            monster_move(s.construcao, s.monstro[i])
-            s.monstro[i].draw()
-    # print("E: ",s.andar_esquerda,"D: ",s.andar_direita,"C: ",s.andar_cima,"B: ",s.andar_baixo)
-
-    update()
+    if s.MENU:
+        nome.draw()
+        butao_inicar.draw()
+        if butao_click(m, butao_inicar):
+            if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT):
+                s.GAME = True
+                s.MENU = False
+        janela.update()
