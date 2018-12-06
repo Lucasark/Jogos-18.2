@@ -178,7 +178,6 @@ def show_hud(pedra,madeira,ferro,cobre,ouro):
                          quantidade_HUD_cobre.y, s.text[1],
                          s.text[0], s.text[2])
 
-
 #Habilidades:
 """
 
@@ -195,13 +194,17 @@ ferramenta_pagina_2 = [GameImage(s.FERRAMENTAS_BUTTON[3]), GameImage(s.FERRAMENT
 ferramenta_button = [GameImage(s.FERRRAMENTA_JANELA[0]), GameImage(s.FERRRAMENTA_JANELA[1])]
 
 #Appendes do BG:
-nao_colidiveis = [fundo, grama,monster_spawn]
+construcao = []
+monstros = []
+bomba = []
+radio = []
+nao_colidiveis = [fundo, grama, monster_spawn]
 colidiveis = [bloqueio1, bloqueio2, bloqueio3,bloqueio4,arvore_1,arvore_2,agua,arvore_3,arvore_4,pedra_de_5_lados,bloco_esquerda,bloco_direita,arvore_spawn]
 colidiveis_esquerda = [arvore_1,arvore_2,pedra_de_5_lados,bloqueio2,bloco_esquerda,bloqueio1,arvore_spawn]
 colidiveis_baixo =[agua,pedra_de_5_lados,arvore_spawn]
 colidiveis_direita =[arvore_3,arvore_4,bloqueio3,pedra_de_5_lados,bloco_direita,bloqueio4,arvore_spawn]
 colidiveis_cima =[pedra_de_5_lados,bloqueio1,arvore_2,arvore_4,bloqueio4,arvore_spawn]
-bg_total = nao_colidiveis + colidiveis
+
 
 nome = GameImage(s.NOME)
 butao_inicar = GameImage(s.INICIAR)
@@ -381,52 +384,72 @@ def colisao_baixo(atr,player):
 
 #------MONSTROS-----#
 
-def monster_move(constru, monstro):
-    if s.tem_construcao:
-        if constru.x < monstro.x and constru.y < monstro.y:
+def monster_move(monstro):
+    if len(bomba) != 0:
+        if bomba[0].x < monstro.x and bomba[0].y < monstro.y:
             monstro.x -= 1
             monstro.y -= 1
-        elif constru.x > monstro.x and constru.y < monstro.y:
+        elif bomba[0].x > monstro.x and bomba[0].y < monstro.y:
             monstro.x += 1
             monstro.y -= 1
-        elif constru.x > monstro.x and constru.y > monstro.y:
+        elif bomba[0].x > monstro.x and bomba[0].y > monstro.y:
             monstro.x += 1
             monstro.y += 1
-        elif constru.x < monstro.x and constru.y > monstro.y:
+        elif bomba[0].x < monstro.x and bomba[0].y > monstro.y:
             monstro.x -= 1
             monstro.y += 1
-        return colisao_pplay.collided(monstro,constru)
+
+    elif len(construcao) != 0:
+        if construcao[0].x < monstro.x and construcao[0].y < monstro.y:
+            monstro.x -= 1
+            monstro.y -= 1
+        elif construcao[0].x > monstro.x and construcao[0].y < monstro.y:
+            monstro.x += 1
+            monstro.y -= 1
+        elif construcao[0].x > monstro.x and construcao[0].y > monstro.y:
+            monstro.x += 1
+            monstro.y += 1
+        elif construcao[0].x < monstro.x and construcao[0].y > monstro.y:
+            monstro.x -= 1
+            monstro.y += 1
+
     else:
-        if player.x < monstro.x:
-            if not colisao_esquerda(colidiveis_esquerda,monstro):
-                monstro.x -= 1
-            else:
-                monstro.y += 1
-        elif player.x > monstro.x:
-            if not colisao_direita(colidiveis_direita,monstro):
-                monstro.x += 1
-            else:
-                monstro.y += 1
-        else:
-            if player.y < monstro.y:
-                monstro.y -= 1
-            elif player.y > monstro.y:
-                monstro.y += 1
+        if player.x < monstro.x and player.y < monstro.y:
+            monstro.x -= 1
+            monstro.y -= 1
+        elif player.x > monstro.x and player.y < monstro.y:
+            monstro.x += 1
+            monstro.y -= 1
+        elif player.x > monstro.x and player.y > monstro.y:
+            monstro.x += 1
+            monstro.y += 1
+        elif player.x < monstro.x and player.y > monstro.y:
+            monstro.x -= 1
+            monstro.y += 1
+        if colisao_pplay.collided(monstro, player):
+            return 1
 
-def destroi_construcao(atual):
-    if monster_move(s.construcao,s.monstro[atual]):
-        s.duracao_tempo -= 1
+def destroi_construcao(atual, mons):
+    if colisao_pplay.perfect_collision(atual, mons):
         if s.duracao_tempo == 0:
-            s.tem_construcao[atual] = False
-
+            s.duracao_tempo = 10
+            #print()
+            return True
+        else:
+            s.duracao_tempo -= 1
+            return False
+    return False
 #--------------------CONSTRUÇÃO--------------------#
 
-def constroi_maquina(x,y):
-    if s.quantidade_de_recursos[3] >= 10:
-        s.quantidade_de_recursos[3] -=10
-        s.tem_construcao = True
-        s.construcao.append(spawn(s.maquina,x,y))
-        bg_total.append(s.construcao)
+def constroi_maquina(x,y, op):
+    if op == 0:
+        bomba.append(spawn(s.bomba, x, y))
+    if op == 1:
+        construcao.append(spawn(s.maquina, x, y))
+    if op == 2:
+        construcao.append(spawn(s.maquina2, x, y))
+    if op == 3:
+        construcao.append(spawn(s.maquina3, x, y))
 
 #Appendes do Cenario:
 
@@ -439,29 +462,25 @@ def movimento_objet(atr, mov, orien):
     if mov == 1 and orien == 'x':
         for i in range(len(atr)):
             atr[i].x += velocidade
-        #res.x -= velocidade
 
     elif mov == -1 and orien == 'x':
         for i in range(len(atr)):
             atr[i].x -= velocidade
-        #res.x += velocidade
 
     elif mov == 1 and orien == 'y':
         for i in range(len(atr)):
             atr[i].y -= velocidade
-        #res.y += velocidade
 
     elif mov == -1 and orien == 'y':
         for i in range(len(atr)):
             atr[i].y += velocidade
-        #res.y -= velocidade
 
 def andar(direcao_player):
     if k.key_pressed("A") or k.key_pressed("LEFT") and s.andar_esquerda: #<-
 
-        if not colisao_esquerda(colidiveis_esquerda,player):
+        if not colisao_esquerda(colidiveis_esquerda, player):
             movimento_objet(bg_total, 1, 'x')
-            direcao_player = 2
+            #ANIMAR O PLAYER
             player.update()
         else:
             movimento_objet(bg_total, -1,'x')
@@ -504,26 +523,34 @@ def liberar_habilidade(hab):
 
 def ferramentas_action(act):
     #BOMBA = MADEIRA 5 + PEDRA 5
-    if act == 0 and s.quantidade_de_recursos[3] >= 10 and s.quantidade_de_recursos[4] >= 10:
+    if act == 0 and s.quantidade_de_recursos[3] >= 10 and s.quantidade_de_recursos[4] >= 10 and s.FERRAMENTAS_OPEN[0]:
         print("FERRAMENTA 0")
         s.quantidade_de_recursos[3] -= 10
         s.quantidade_de_recursos[4] -= 10
+        constroi_maquina(player.x, player.y, 0)
+        s.TIME_BOMBA.append(500)
 
     #MAQUINA MADEIRA REFINAR = MADEIRA 30
-    if act == 1 and s.quantidade_de_recursos[3] >= 30:
+    if act == 1 and s.quantidade_de_recursos[3] >= 30 and s.FERRAMENTAS_OPEN[1]:
         s.quantidade_de_recursos[3] -= 30
         print("FERRAMENTA 1")
+        constroi_maquina(player.x, player.y, 1)
+        s.TIPO_CONSTRUCAO.append(1)
 
     #MAQUINA PEDRA REFINAR = PEDRA 30
     if act == 2 and s.quantidade_de_recursos[4] >= 30:
         s.quantidade_de_recursos[4] -= 30
         print("FERRAMENTA 2")
+        constroi_maquina(player.x, player.y, 2)
+        s.TIPO_CONSTRUCAO.append(2)
 
     #MAQUINA M+P = MR 20 + PR 20
     if act == 3 and s.quantidade_de_recursos[5] >= 20 and s.quantidade_de_recursos[6] >= 20:
         s.quantidade_de_recursos[5] -= 20
         s.quantidade_de_recursos[6] -= 20
         print("FERRAMENTA 3")
+        constroi_maquina(player.x, player.y, 3)
+        s.TIPO_CONSTRUCAO.append(3)
 
     #RADIO = M+P 20 + MR 10 + PR 10
     if act == 4 and s.quantidade_de_recursos[5] >= 10 and s.quantidade_de_recursos[6] >= 10 and s.quantidade_de_recursos[7] >= 20:
@@ -541,6 +568,7 @@ def habilidade_action(act):
             return True
         else:
             return False
+
     elif act == 1:
         if s.EXPERIENCIA >= 15:
             print("HABILIDADE 1 EFTUADO")
@@ -549,6 +577,7 @@ def habilidade_action(act):
             return True
         else:
             return False
+
     elif act == 2:
         if s.EXPERIENCIA >= 15:
             print("HABILIDADE 2 EFTUADO")
@@ -558,8 +587,8 @@ def habilidade_action(act):
             return True
         else:
             return False
+
     elif act == 3:
-        print("FOI")
         if s.EXPERIENCIA >= 15:
             print("HABILIDADE 3 EFTUADO")
             s.MAQUINA_REFINADORA_PEDRA = True
@@ -568,6 +597,7 @@ def habilidade_action(act):
             return True
         else:
             return False
+
     elif act == 4:
         if s.EXPERIENCIA >= 30:
             print("HABILIDADE 4 EFTUADO")
@@ -636,7 +666,7 @@ def habilidade_action(act):
         print("ZUOU")
         return False
 
-def opcoes():
+def opcoes(bg):
     if k.key_pressed("F") and click_pause(s.CLICK_TIME_WAIT) and not s.ferramenta_press:
         print("HABILIDADES")
         if (not s.habilidade_press):
@@ -658,15 +688,15 @@ def opcoes():
     if s.habilidade_press:
         habilidade.draw()
         draw_sprite(habilidade_atual)
-        for i in range(len(habilidade_atual)):
-            if butao_click(m, habilidade_atual[i]):  # 1
+        for l in range(len(habilidade_atual)):
+            if butao_click(m, habilidade_atual[l]):  # 1
                 #printar balão
-                if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT) and s.HABILIDADE_STATUS[i] == 0:
-                    print("Habilidade", i,"Requisitado!")
-                    if habilidade_action(i):
-                        habilidade_atual[i] = trocar_sprite_hab(habilidade_atual[i], i, 0)
-                        s.HABILIDADE_STATUS[i] = 1
-                        liberar_habilidade(s.HABILIDADE_LIBERAR[i])
+                if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT) and s.HABILIDADE_STATUS[l] == 0:
+                    print("Habilidade", l,"Requisitado!")
+                    if habilidade_action(l):
+                        habilidade_atual[l] = trocar_sprite_hab(habilidade_atual[l], l, 0)
+                        s.HABILIDADE_STATUS[l] = 1
+                        liberar_habilidade(s.HABILIDADE_LIBERAR[l])
                         print(s.HABILIDADE_STATUS)
 
     if s.ferramenta_press:
@@ -687,61 +717,129 @@ def opcoes():
         if s.FPAGINA2:
             draw_sprite(ferramenta_pagina_2)
             ferramenta_button[1].draw()
-            for i in range(len(ferramenta_pagina_2)):
-                if butao_click(m, ferramenta_pagina_2[i]):
+            for t in range(len(ferramenta_pagina_2)):
+                if butao_click(m, ferramenta_pagina_2[t]):
                     if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT) and s.FERRAMENTAS_OPEN:
-                        print("Ferramenta", i+3, "requisitado!")
-                        ferramentas_action(i+3)
+                        print("Ferramenta", t+3, "requisitado!")
+                        ferramentas_action(t+3)
 
             if butao_click(m, ferramenta_button[1]):
                 if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT):
                     s.FPAGINA1 = True
                     s.FPAGINA2 = False
 
-def update():
+def update(bg):
     exp_time()
     janela.set_title(str(janela.delta_time()))
     andar(direcao_player)
     player.draw()
-    opcoes()
-    #destroi_construcao(atual)
+    opcoes(bg)
     janela.update()
 
 frame = 0
-monstros_desenhados = 0
+def remove_construcao(obj):
+    construcao.pop(obj)
+    s.TIPO_CONSTRUCAO.pop(obj)
+
+def vida_ciclo():
+    if not s.VIDA_LOOK:
+        s.VIDA_TIME -= 1
+
+    if s.VIDA_TIME == 0:
+        s.VIDA_LOOK = True
+        s.VIDA_TIME = 30
+
+def bomba_ciclo(b):
+    for i in range(len(b)):
+        if s.TIME_BOMBA[i] == 0:
+            s.TIME_BOMBA.pop(i)
+            b.pop(i)
+            break
+        else:
+            s.TIME_BOMBA[i] -= 1
+
+def reset():
+    print("NÃO IMPLEMENTADO AINDA")
 
 while True:
     #print("Exp:"+str(s.EXPERIENCIA))
     frame += 1
     click_call()
+    vida_ciclo()
     background_da_janela.draw()
     m = mouse.get_position()
 
+    if s.VIDA == 0:
+        s.MENU = True
+        s.GAME = False
+        s.VIDA = 5
+        reset()
+
     if s.GAME:
+        bg_total = nao_colidiveis + colidiveis + construcao + monstros + bomba + radio
         draw_sprite(bg_total)
         vetor_de_madeira(arvore_spawn, frame)
-        if frame > 1001:
+
+        if frame > 251:
             frame = 0
-            s.monstro.append(spawn('aranha.png', monster_spawn.x + monster_spawn.width / 2, monster_spawn.y + monster_spawn.height / 2))
-            bg_total.append(s.monstro[monstros_desenhados])
-            monstros_desenhados += 1
-            s.tem_monstro.append(True)
+            aux = Animation(s.aranha, 3)
+            aux.set_position(monster_spawn.x + monster_spawn.width / 2, monster_spawn.y + monster_spawn.height / 2)
+            monstros.append(aux)
 
         HP.draw()
-        show_hud(10, s.quantidade_de_recursos[3], 20, 30, 40)
-        if s.tem_construcao:
-            s.construcao.draw()
-        if k.key_pressed("B"):
-            constroi_maquina(player.x, player.y)
-            for i in range(len(s.construcao)):
-                s.construcao[i].draw()
+        show_hud(s.quantidade_de_recursos[4], s.quantidade_de_recursos[3], s.quantidade_de_recursos[0], s.quantidade_de_recursos[2], s.quantidade_de_recursos[1])
+        show_hud(s.quantidade_de_recursos[4], s.quantidade_de_recursos[3], s.quantidade_de_recursos[0], s.quantidade_de_recursos[2], s.quantidade_de_recursos[1])
 
-        for i in range(len(s.monstro)):
-            if s.tem_monstro[i]:
-                monster_move(s.construcao, s.monstro[i])
-                s.monstro[i].draw()
+        draw_sprite(construcao)
 
-        update()
+        for i in range(len(construcao)):
+            try:
+                if butao_click(m, construcao[i]):
+                    if mouse.is_button_pressed(1) and click_pause(s.CLICK_TIME_WAIT):
+                        if s.TIPO_CONSTRUCAO[i] == 1:
+                            s.quantidade_de_recursos[3] -= 5
+                            s.quantidade_de_recursos[5] += 1
+
+                        elif s.TIPO_CONSTRUCAO[i] == 2:
+                            s.quantidade_de_recursos[4] -= 5
+                            s.quantidade_de_recursos[6] += 1
+
+                        elif s.TIPO_CONSTRUCAO[i] == 3:
+                            s.quantidade_de_recursos[6] -= 5
+                            s.quantidade_de_recursos[5] -= 5
+                            s.quantidade_de_recursos[7] += 1
+            except:
+                print(len(construcao))
+                #print(construcao[i])
+
+            for j in range(len(monstros)):
+                try:
+                    if destroi_construcao(construcao[i], monstros[j]):
+                        remove_construcao(i)
+                except:
+                    print("PPLAY É UMA MERDA")
+
+        draw_sprite(monstros)
+        tipo = -1
+        for i in range(len(monstros)):
+            monster_move(monstros[i])
+
+        if len(monstros) != 0:
+            if colisao_pplay.collided(monstros[0], player) and s.VIDA_LOOK:
+                s.VIDA_LOOK = False
+                s.VIDA -= 1
+            if len(bomba) != 0:
+                if colisao_pplay.collided(monstros[0], bomba[0]):
+                    try:
+                        monstros.pop(0)
+                    except:
+                        print("PPLAY É UMA MERDA")
+
+        if len(bomba) != 0:
+            bomba_ciclo(bomba)
+
+        print(s.quantidade_de_recursos)
+        update(bg_total)
 
     if s.MENU:
         nome.draw()

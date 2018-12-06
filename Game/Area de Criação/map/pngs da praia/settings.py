@@ -89,7 +89,9 @@ CLICK_ANDAR_WAIT = 20
 CLICK_SIGNAL = True #True -> Pode clickar -- False-> Nao pode clickar
 
 #PLAYER PARAMETROS:
-VIDA = 0
+VIDA = 5
+VIDA_LOOK = False
+VIDA_TIME = 30
 EXPERIENCIA = 100
 TIME_TO_EXPERIENCIA = 50
 LOOK_EXPERIENCIA = 50 #pode multiplar pela dificuldade
@@ -108,7 +110,7 @@ recursos = ['ferro.png','ouro.png','cobre.png','madeira.png','pedra_coletavel.pn
 #5-> MADEIRA_REFINADA
 #6-> PEDRA_REFINADA
 #7-> P+M
-quantidade_de_recursos = [0,0,0,0,0,0,0,0]
+quantidade_de_recursos = [0,0,0,100000,200,200,200,200]
 
 
 estado_madeira = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
@@ -131,15 +133,22 @@ text =[(255,255,255),16,"Space Mono"]
 
 
 #-----------------MONSTRO---------------#
-
-duracao_tempo = 2000
+MAQUINAS = []
+duracao_tempo = 10
 
 monstro = []
 tem_monstro = []
 tem_construcao = []
-construcao = []
+
+aranha = 'bee.png'
+ARANHA = []
+POS_ARANHA = []
+TIME_ARANHA = []
+TIME_ALL_ARANHA = 20
+LOCK_ARANHA = []
 
 #-----------------MÁQUINA---------------#
+TIPO_CONSTRUCAO = []
 
 maquina = 'alavanca2.png'
 MAQUINA_REFINADORA_MADEIRA = False
@@ -148,14 +157,14 @@ TIME_MADEIRA = []
 TIME_ALL_MADEIRA = 20
 LOCK_MADEIRA = []
 
-maquina2 = ''
+maquina2 = 'CIH2.png'
 MAQUINA_REFINADORA_PEDRA = False
 POS_PEDRA = []
 TIME_PEDRA = []
 TIME_ALL_PEDRA = 20
 LOCK_PEDRA = []
 
-maquina3 = ''
+maquina3 = 'CIH2.png'
 MAQUINA_REFINADORA_PM = False
 POS_MD = []
 TIME_PM = []
@@ -163,14 +172,14 @@ TIME_ALL_PM = 20
 LOCK_PM = []
 
 #-----------------OBEJTOS-------------#
-bomba = ''
+bomba = 'bomba.png'
 BOMBA = False
 POS_BOMBA = []
 TIME_BOMBA = []
 TIME_ALL_BOMBA = 100
 LOCK_BOMBA = []
 
-radio1 = ''
+radio1 = 'radio.png'
 RADIO1 = False
 
 #---------------TELA-----------#
@@ -178,6 +187,3 @@ INICIAR = 'iniciar.png'
 NOME = 'Nome.png'
 MENU = True
 GAME = False
-
-
-
