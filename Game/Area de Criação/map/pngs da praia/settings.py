@@ -1,11 +1,10 @@
-import pygame
+#import pygame
 
 #Titulo
 TITLE = 'Teste de Game'
 
 #Dificuldade
-DIFICULDADE_GAME = 1
-
+DIFICULDADE_GAME = 1 #saudades
 
 #Tela
 # Suporte no 16:9 -> 720,480 - 1280,720
@@ -19,11 +18,12 @@ HEIGHT = 700
 #CENARIO 1:
 bg = 'bg_praia.png'
 arvore = ['arvore1.png', 'arvore2.png', 'arvore3.png']
-pedra = 'pedra_de_5_lados.png'
+pedra = 'pedra.png'
 borderEdge = ['bloqueio_lateral.png', 'bloqueio_superior.png', 'agua_praia.png', 'grama_praia.png']
 cenario = ['monster_spawn.png', 'arvore1.png', 'arvore2.png', 'arvore3.png']
 background_do_background = 'fundo_forcado.png'
-
+AUX_D = [0,0]
+AUX_E = [0,0]
 #CENARIO 2:
 
 #CENARIO 3:
@@ -92,7 +92,7 @@ CLICK_SIGNAL = True #True -> Pode clickar -- False-> Nao pode clickar
 VIDA = 5
 VIDA_LOOK = False
 VIDA_TIME = 30
-EXPERIENCIA = 100
+EXPERIENCIA = 10
 TIME_TO_EXPERIENCIA = 50
 LOOK_EXPERIENCIA = 50 #pode multiplar pela dificuldade
 
@@ -101,7 +101,7 @@ PODEMADEIRA = False
 PODEPEDRA = False
 PODEFERRO = False
 
-recursos = ['ferro.png','ouro.png','cobre.png','madeira.png','pedra_coletavel.png']
+recursos = ['ferro.png','ouro.png','cobre.png','madeira.png','pedra_coletavel.png','madeira_refinada.png','pedra_refinada.png','pm.png']
 #0-> FERRO
 #1-> OURO
 #2-> COBRE
@@ -110,11 +110,24 @@ recursos = ['ferro.png','ouro.png','cobre.png','madeira.png','pedra_coletavel.pn
 #5-> MADEIRA_REFINADA
 #6-> PEDRA_REFINADA
 #7-> P+M
-quantidade_de_recursos = [0,0,0,100000,200,200,200,200]
+quantidade_de_recursos = [0,0,0,0,00,0,0,0]
+loop_recursos = [0,0,0,500,600]
+tempo_recurso_madeira = [loop_recursos[3],loop_recursos[3],loop_recursos[3],loop_recursos[3],loop_recursos[3],loop_recursos[3],
+                         loop_recursos[3],loop_recursos[3],loop_recursos[3],loop_recursos[3],loop_recursos[3],loop_recursos[3],
+                         loop_recursos[3],loop_recursos[3],loop_recursos[3],loop_recursos[3],loop_recursos[3],loop_recursos[3]]
+tempo_recurso_pedra = [loop_recursos[4],loop_recursos[4],loop_recursos[4],loop_recursos[4],
+                       loop_recursos[4],loop_recursos[4],loop_recursos[4],loop_recursos[4]]
+
+
+tempo_pedra=[0]*len(tempo_recurso_pedra)
+tempo_madeira = [0]*len(tempo_recurso_madeira)
+
 
 
 estado_madeira = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+estado_pedra = [True,True,True, True, True, True,True, True]
 loops = 2000
+
 
 
 
@@ -127,8 +140,10 @@ gambiarra_bloco = "player_rect.png"
 hud =['hud_hp.png','hud_X.png','madeira_HUD.png','ouro_HUD.png','ferro_HUD.png','pedra_coletavel_HUD.png','cobre_HUD.png']
 
 
+
+
 #TEXTO
-text =[(255,255,255),16,"Space Mono"]
+text =[(114,186,207),16,"Space Mono"]
 # text = [ cor, tamanho da fonte, tipo da fonte ]
 
 
@@ -150,21 +165,21 @@ LOCK_ARANHA = []
 #-----------------MÁQUINA---------------#
 TIPO_CONSTRUCAO = []
 
-maquina = 'alavanca2.png'
+maquina = 'alavanca1.png'
 MAQUINA_REFINADORA_MADEIRA = False
 POS_MADEIRA = []
 TIME_MADEIRA = []
 TIME_ALL_MADEIRA = 20
 LOCK_MADEIRA = []
 
-maquina2 = 'CIH2.png'
+maquina2 = 'alavanca2.png'
 MAQUINA_REFINADORA_PEDRA = False
 POS_PEDRA = []
 TIME_PEDRA = []
 TIME_ALL_PEDRA = 20
 LOCK_PEDRA = []
 
-maquina3 = 'CIH2.png'
+maquina3 = 'alavanca3.png'
 MAQUINA_REFINADORA_PM = False
 POS_MD = []
 TIME_PM = []

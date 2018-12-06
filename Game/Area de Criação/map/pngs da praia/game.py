@@ -68,7 +68,7 @@ bloqueio2.set_position(0, 0)
 bloqueio4.set_position(bloqueio1.x+bloqueio1.width+tile*4,bloqueio1.y)
 
 
-#gambiarra_foda:
+#gambiarra:
 bloco_esquerda = GameImage(s.gambiarra_bloco)
 bloco_direita = GameImage(s.gambiarra_bloco)
 
@@ -93,6 +93,11 @@ arvore_3.set_position(fundo.width-tile*4,bloqueio1.height)
 arvore_4.set_position(arvore_3.x,arvore_3.height)
 arvore_spawn.set_position(fundo.width/2,arvore_4.y+arvore_4.height)
 
+s.AUX_E[0] = 0
+s.AUX_E[1] = 0
+s.AUX_D[0] = janela.width
+s.AUX_D[1] = janela.height
+
 #----RECURSOS----#
 
 def spawn(png,x,y):
@@ -101,7 +106,7 @@ def spawn(png,x,y):
     return imagem
 
 
-def vetor_de_madeira(arvore,tempo):
+def spawn_madeira(arvore):
     a = s.recursos[3]
     x = arvore.x
     y = arvore.y
@@ -112,24 +117,45 @@ def vetor_de_madeira(arvore,tempo):
                 spawn(a, x - tile, y+tile*3), spawn(a, x + tile * 3, y+tile*3),
                 spawn(a, x - tile, y+tile*4), spawn(a, x, y+tile*4), spawn(a, x + tile, y+tile*4),spawn(a, x + tile * 2, y+tile*4), spawn(a, x + tile * 3, y+tile*4)]
     for i in range(len(madeiras)):
-      if not colisao_pplay.collided(player,madeiras[i]) and s.estado_madeira[i]:
+      s.tempo_madeira[i] +=1
+      if not colisao_pplay.collided(player,madeiras[i]) and s.estado_madeira[i] and s.tempo_madeira[i] > s.tempo_recurso_madeira[i]:# and tempo >:
         madeiras[i].draw()
+
         #break
       elif colisao_pplay.collided(player,madeiras[i]) and s.estado_madeira[i] and s.PODEMADEIRA:
           s.quantidade_de_recursos[3] += 1
           s.estado_madeira[i] = False
-      if not s.estado_madeira[i] and tempo > s.loops:
+          s.tempo_madeira[i] = 0
+      if not s.estado_madeira[i] and s.tempo_madeira[i] > s.loop_recursos[3]:
           s.estado_madeira[i] = True
+
+def spawn_pedra(pedra):
+    a = s.recursos[4]
+    x = pedra.x
+    y = pedra.y
+    pedras = [spawn(a,x-tile,y-tile), spawn(a,x,y-tile),spawn(a,x+tile,y-tile),
+              spawn(a,x-tile,y),spawn(a,x+tile,y),
+              spawn(a,x-tile,y+tile),spawn(a,x,y+tile),spawn(a,x+tile,y+tile)]
+    for i in range(len(pedras)):
+        s.tempo_pedra[i] += 1
+        if not colisao_pplay.collided(player,pedras[i]) and s.estado_pedra[i]  and s.tempo_pedra[i] > s.tempo_recurso_pedra[i]:
+            pedras[i].draw()
+        elif colisao_pplay.collided(player,pedras[i]) and s.estado_pedra[i] and s.PODEPEDRA:
+            s.quantidade_de_recursos[4] += 1
+            s.estado_pedra[i] = False
+            s.tempo_pedra[i] =0
+        if not s.estado_pedra[i] and s.tempo_pedra[i] > s.loop_recursos[4]:
+            s.estado_pedra[i] = True
+
 
 
 
 #-------------------------------------------------HUD--------------------------------------#
-HP = Animation(s.hud[0],11)
-HP.set_total_duration(1000)
-HP.set_position(0,0)
+HP = [spawn(s.hud[0],0,0),spawn(s.hud[0],tile,0),spawn(s.hud[0],tile*2,0),spawn(s.hud[0],tile*3,0),spawn(s.hud[0],tile*4,0)]
+
 
 quantidade_HUD_madeira = Sprite(s.hud[1])
-quantidade_HUD_madeira.set_position(HP.x+quantidade_HUD_madeira.width,HP.y+HP.height+tile-(quantidade_HUD_madeira.height/2))
+quantidade_HUD_madeira.set_position(0+quantidade_HUD_madeira.width,0+tile*2-(quantidade_HUD_madeira.height/2))
 
 madeira_HUD = Sprite(s.hud[2])
 madeira_HUD.set_position(quantidade_HUD_madeira.x+quantidade_HUD_madeira.width-tile,quantidade_HUD_madeira.y)
@@ -158,11 +184,32 @@ cobre_HUD.set_position(ferro_HUD.x,ferro_HUD.y+ferro_HUD.height+tile/2)
 quantidade_HUD_cobre = Sprite(s.hud[1])
 quantidade_HUD_cobre.set_position(cobre_HUD.x+cobre_HUD.width,ferro_HUD.y+ferro_HUD.height+tile/2)
 
-HUD_materials = [quantidade_HUD_ouro,quantidade_HUD_madeira,quantidade_HUD_pedra_coletavel,madeira_HUD,ouro_HUD,pedra_coletavel_HUD,ferro_HUD,quantidade_HUD_ferro,quantidade_HUD_cobre,cobre_HUD]
+madeira_refinada_HUD = Sprite(s.recursos[5])
+madeira_refinada_HUD.set_position(cobre_HUD.x,cobre_HUD.y+cobre_HUD.height+tile/2)
+
+quantidade_HUD_madeira_refinada = Sprite(s.hud[1])
+quantidade_HUD_madeira_refinada.set_position(ouro_HUD.x+ouro_HUD.width,cobre_HUD.y+cobre_HUD.height+tile/2)
+
+pedra_refinada_HUD = Sprite(s.recursos[6])
+pedra_refinada_HUD.set_position(cobre_HUD.x,madeira_refinada_HUD.y+madeira_refinada_HUD.height+tile/2)
+
+quantidade_HUD_pedra_refinada = Sprite(s.hud[1])
+quantidade_HUD_pedra_refinada.set_position(ouro_HUD.x+ouro_HUD.width,madeira_refinada_HUD.y+madeira_refinada_HUD.height+tile/2)
+
+pm_HUD = Sprite(s.recursos[7])
+pm_HUD.set_position(ouro_HUD.x,pedra_refinada_HUD.y+pedra_refinada_HUD.height+tile/2)
+
+quantidade_HUD_pm = Sprite(s.hud[1])
+quantidade_HUD_pm.set_position(ouro_HUD.x+ouro_HUD.width,pedra_refinada_HUD.y+pedra_refinada_HUD.height+tile/2)
+
+
+HUD_materials = [quantidade_HUD_ouro,quantidade_HUD_madeira,quantidade_HUD_pedra_coletavel,madeira_HUD,ouro_HUD,pedra_coletavel_HUD,
+                 ferro_HUD,quantidade_HUD_ferro,quantidade_HUD_cobre,cobre_HUD,madeira_refinada_HUD,quantidade_HUD_madeira_refinada
+                 ,pedra_refinada_HUD,quantidade_HUD_pedra_refinada,quantidade_HUD_pm,pm_HUD]
 
 
 #mostrar o HUD ao teclar 0
-def show_hud(pedra,madeira,ferro,cobre,ouro):
+def show_hud(pedra,madeira,ferro,cobre,ouro,madeira_refinada,pedra_refinada,pm):
     if k.key_pressed("0"):
         draw_sprite(HUD_materials)
         janela.draw_text(str(madeira), quantidade_HUD_madeira.x + quantidade_HUD_madeira.width, quantidade_HUD_madeira.y,
@@ -177,6 +224,23 @@ def show_hud(pedra,madeira,ferro,cobre,ouro):
         janela.draw_text(str(cobre), quantidade_HUD_cobre.x + quantidade_HUD_cobre.width,
                          quantidade_HUD_cobre.y, s.text[1],
                          s.text[0], s.text[2])
+        janela.draw_text(str(madeira_refinada), quantidade_HUD_madeira_refinada.x + quantidade_HUD_madeira_refinada.width,
+                         quantidade_HUD_madeira_refinada.y, s.text[1],
+                         s.text[0], s.text[2])
+        janela.draw_text(str(pedra_refinada), quantidade_HUD_pedra_refinada.x + quantidade_HUD_pedra_refinada.width,
+                         quantidade_HUD_pedra_refinada.y, s.text[1],
+                         s.text[0], s.text[2])
+        janela.draw_text(str(pm), quantidade_HUD_pm.x + quantidade_HUD_pm.width,
+                         quantidade_HUD_pm.y, s.text[1],
+                         s.text[0], s.text[2])
+
+        janela.draw_text("Experiencia :" +str(s.EXPERIENCIA),HP[-1].x+HP[-1].width,HP[-1].y,32,
+                         s.text[0], s.text[2])
+
+def show_HP(hp):
+    for i in range(s.VIDA):
+        hp[i].draw()
+
 
 #Habilidades:
 """
@@ -385,49 +449,85 @@ def colisao_baixo(atr,player):
 #------MONSTROS-----#
 
 def monster_move(monstro):
-    if len(bomba) != 0:
-        if bomba[0].x < monstro.x and bomba[0].y < monstro.y:
+    if monstro.x > s.AUX_D[0]:
+        if monstro.y-2 > s.AUX_D[1]: #teste
             monstro.x -= 1
             monstro.y -= 1
-        elif bomba[0].x > monstro.x and bomba[0].y < monstro.y:
-            monstro.x += 1
-            monstro.y -= 1
-        elif bomba[0].x > monstro.x and bomba[0].y > monstro.y:
-            monstro.x += 1
-            monstro.y += 1
-        elif bomba[0].x < monstro.x and bomba[0].y > monstro.y:
+            monstro.update()
+        elif monstro.y+2 < s.AUX_D[1]:
             monstro.x -= 1
             monstro.y += 1
+            monstro.update()
+        else:
+            monstro.x -= 1
+            monstro.update()
 
-    elif len(construcao) != 0:
-        if construcao[0].x < monstro.x and construcao[0].y < monstro.y:
-            monstro.x -= 1
-            monstro.y -= 1
-        elif construcao[0].x > monstro.x and construcao[0].y < monstro.y:
-            monstro.x += 1
-            monstro.y -= 1
-        elif construcao[0].x > monstro.x and construcao[0].y > monstro.y:
-            monstro.x += 1
-            monstro.y += 1
-        elif construcao[0].x < monstro.x and construcao[0].y > monstro.y:
-            monstro.x -= 1
-            monstro.y += 1
+    #elif monstro.x > s.AUX_E[0]:
+    #    if monstro.y+2 > s.AUX_E[1]:
+    #         monstro.x += 1
+    #         monstro.y -= 1
+    #         monstro.update()
+    #    elif monstro.y-2 < s.AUX_E[1]:
+    #         monstro.x -= 1
+    #         monstro.y += 1
+    #         monstro.update()
+    #    else:
+    #         monstro.x += 1
+    #         monstro.update()
 
     else:
-        if player.x < monstro.x and player.y < monstro.y:
-            monstro.x -= 1
-            monstro.y -= 1
-        elif player.x > monstro.x and player.y < monstro.y:
-            monstro.x += 1
-            monstro.y -= 1
-        elif player.x > monstro.x and player.y > monstro.y:
-            monstro.x += 1
-            monstro.y += 1
-        elif player.x < monstro.x and player.y > monstro.y:
-            monstro.x -= 1
-            monstro.y += 1
-        if colisao_pplay.collided(monstro, player):
-            return 1
+        if s.AUX_E[1] < monstro.y and s.AUX_D[1] < monstro.y:
+             monstro.y -= 1
+             monstro.update()
+        elif s.AUX_D[1] < monstro.y and s.AUX_D[1] < monstro.y:
+             monstro.y += 1
+             monstro.update()
+        else: #dentro da tela
+            if len(bomba) != 0:
+                if bomba[0].x < monstro.x and bomba[0].y < monstro.y:
+                    monstro.x -= 1
+                    monstro.y -= 1
+                elif bomba[0].x > monstro.x and bomba[0].y < monstro.y:
+                    monstro.x += 1
+                    monstro.y -= 1
+                elif bomba[0].x > monstro.x and bomba[0].y > monstro.y:
+                    monstro.x += 1
+                    monstro.y += 1
+                elif bomba[0].x < monstro.x and bomba[0].y > monstro.y:
+                    monstro.x -= 1
+                    monstro.y += 1
+                monstro.update()
+
+            elif len(construcao) != 0:
+                if construcao[0].x < monstro.x and construcao[0].y < monstro.y:
+                    monstro.x -= 1
+                    monstro.y -= 1
+                elif construcao[0].x > monstro.x and construcao[0].y < monstro.y:
+                    monstro.x += 1
+                    monstro.y -= 1
+                elif construcao[0].x > monstro.x and construcao[0].y > monstro.y:
+                    monstro.x += 1
+                    monstro.y += 1
+                elif construcao[0].x < monstro.x and construcao[0].y > monstro.y:
+                    monstro.x -= 1
+                    monstro.y += 1
+                monstro.update()
+            else:
+                if player.x < monstro.x and player.y < monstro.y:
+                    monstro.x -= 1
+                    monstro.y -= 1
+                elif player.x > monstro.x and player.y < monstro.y:
+                    monstro.x += 1
+                    monstro.y -= 1
+                elif player.x > monstro.x and player.y > monstro.y:
+                    monstro.x += 1
+                    monstro.y += 1
+                elif player.x < monstro.x and player.y > monstro.y:
+                    monstro.x -= 1
+                    monstro.y += 1
+                monstro.update()
+                if colisao_pplay.collided(monstro, player):
+                    return 1
 
 def destroi_construcao(atual, mons):
     if colisao_pplay.perfect_collision(atual, mons):
@@ -445,11 +545,17 @@ def constroi_maquina(x,y, op):
     if op == 0:
         bomba.append(spawn(s.bomba, x, y))
     if op == 1:
-        construcao.append(spawn(s.maquina, x, y))
+        aux = Animation(s.maquina, 3)
+        aux.set_position(x,y)
+        construcao.append(aux)
     if op == 2:
-        construcao.append(spawn(s.maquina2, x, y))
+        aux = Animation(s.maquina2, 3)
+        aux.set_position(x, y)
+        construcao.append(aux)
     if op == 3:
-        construcao.append(spawn(s.maquina3, x, y))
+        aux = Animation(s.maquina3, 3)
+        aux.set_position(x, y)
+        construcao.append(aux)
 
 #Appendes do Cenario:
 
@@ -462,11 +568,13 @@ def movimento_objet(atr, mov, orien):
     if mov == 1 and orien == 'x':
         for i in range(len(atr)):
             atr[i].x += velocidade
-
+        s.AUX_D[0] -= velocidade
+        s.AUX_E[0] -= velocidade
     elif mov == -1 and orien == 'x':
         for i in range(len(atr)):
             atr[i].x -= velocidade
-
+        s.AUX_D[0] += velocidade
+        s.AUX_E[0] += velocidade
     elif mov == 1 and orien == 'y':
         for i in range(len(atr)):
             atr[i].y -= velocidade
@@ -626,6 +734,7 @@ def habilidade_action(act):
             return True
         else:
             return False
+
     elif act == 7:
         print("HABILIDADE 7 EFTUADO")
         return True
@@ -737,6 +846,7 @@ def update(bg):
     janela.update()
 
 frame = 0
+
 def remove_construcao(obj):
     construcao.pop(obj)
     s.TIPO_CONSTRUCAO.pop(obj)
@@ -778,17 +888,18 @@ while True:
     if s.GAME:
         bg_total = nao_colidiveis + colidiveis + construcao + monstros + bomba + radio
         draw_sprite(bg_total)
-        vetor_de_madeira(arvore_spawn, frame)
+        show_HP(HP)
+        spawn_madeira(arvore_spawn)
+        spawn_pedra(pedra_de_5_lados)
 
-        if frame > 251:
+        if frame > 1001:
             frame = 0
             aux = Animation(s.aranha, 3)
+            aux.set_total_duration(1000)
             aux.set_position(monster_spawn.x + monster_spawn.width / 2, monster_spawn.y + monster_spawn.height / 2)
             monstros.append(aux)
 
-        HP.draw()
-        show_hud(s.quantidade_de_recursos[4], s.quantidade_de_recursos[3], s.quantidade_de_recursos[0], s.quantidade_de_recursos[2], s.quantidade_de_recursos[1])
-        show_hud(s.quantidade_de_recursos[4], s.quantidade_de_recursos[3], s.quantidade_de_recursos[0], s.quantidade_de_recursos[2], s.quantidade_de_recursos[1])
+        show_hud(s.quantidade_de_recursos[4], s.quantidade_de_recursos[3], s.quantidade_de_recursos[0], s.quantidade_de_recursos[2], s.quantidade_de_recursos[1],s.quantidade_de_recursos[5],s.quantidade_de_recursos[6],s.quantidade_de_recursos[7])
 
         draw_sprite(construcao)
 
@@ -809,8 +920,11 @@ while True:
                             s.quantidade_de_recursos[5] -= 5
                             s.quantidade_de_recursos[7] += 1
             except:
-                print(len(construcao))
-                #print(construcao[i])
+                print("PPLAY é uma MERDA")
+                # print(i)
+                # print(construcao[i])
+                # print(len(construcao))
+                # print(construcao)
 
             for j in range(len(monstros)):
                 try:
@@ -819,26 +933,33 @@ while True:
                 except:
                     print("PPLAY É UMA MERDA")
 
+        if len(bomba) != 0:
+            bomba_ciclo(bomba)
+
         draw_sprite(monstros)
-        tipo = -1
+
         for i in range(len(monstros)):
             monster_move(monstros[i])
+            #print(i, monstros[i].x, monstros[i].y)
+
 
         if len(monstros) != 0:
             if colisao_pplay.collided(monstros[0], player) and s.VIDA_LOOK:
                 s.VIDA_LOOK = False
                 s.VIDA -= 1
             if len(bomba) != 0:
-                if colisao_pplay.collided(monstros[0], bomba[0]):
+                for h in range(len(monstros)):
                     try:
-                        monstros.pop(0)
+                        if colisao_pplay.collided(monstros[h], bomba[0]):
+                            try:
+                                monstros.pop(0)
+                            except:
+                                print("PPLAY É UMA MERDA")
                     except:
                         print("PPLAY É UMA MERDA")
 
-        if len(bomba) != 0:
-            bomba_ciclo(bomba)
-
-        print(s.quantidade_de_recursos)
+        #print(s.quantidade_de_recursos)
+        #print(s.AUX_D, s.AUX_E)
         update(bg_total)
 
     if s.MENU:
